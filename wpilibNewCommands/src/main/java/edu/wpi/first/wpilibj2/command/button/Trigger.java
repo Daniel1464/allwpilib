@@ -49,6 +49,16 @@ public class Trigger implements BooleanSupplier {
     this(CommandScheduler.getInstance().getDefaultButtonLoop(), condition);
   }
 
+  /** Gets the value of this trigger. */
+  public boolean get() {
+    return getAsBoolean();
+  }
+
+  /** Gets the value of this trigger. */
+  public boolean invoke() {
+    return getAsBoolean();
+  }
+
   /**
    * Starts the command when the condition changes.
    *
