@@ -71,6 +71,9 @@ public class LoggerGenerator {
         public Naming defaultNaming() {
           return Naming.USE_CODE_NAME;
         }
+        
+        @Override
+        public boolean warnNotLoggable() { return true; }
       };
 
   public LoggerGenerator(ProcessingEnvironment processingEnv, List<ElementHandler> handlers) {

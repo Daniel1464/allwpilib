@@ -261,9 +261,7 @@ public class AnnotationProcessor extends AbstractProcessor {
       return true;
     }
 
-    boolean loggable = m_handlers.stream().anyMatch(h -> h.isLoggable(element));
-
-    if (loggable) {
+    if (m_handlers.stream().anyMatch(h -> h.isLoggable(element))) {
       return false;
     }
 
@@ -433,14 +431,15 @@ public class AnnotationProcessor extends AbstractProcessor {
         continue;
       }
 
-      if (element instanceof VariableElement v) {
+      if (element instanceof VariableElement v && config.warnNotLoggable()) {
         // isNotLoggable will internally print a warning message
         isNotLoggable(v, v.asType());
       }
 
       if (element instanceof ExecutableElement exe
           && exe.getModifiers().contains(Modifier.PUBLIC)
-          && exe.getParameters().isEmpty()) {
+          && exe.getParameters().isEmpty()
+          && config.warnNotLoggable()) {
         // isNotLoggable will internally print a warning message
         isNotLoggable(exe, exe.getReturnType());
       }

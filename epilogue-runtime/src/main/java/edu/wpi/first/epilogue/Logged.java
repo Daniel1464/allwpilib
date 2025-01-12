@@ -124,4 +124,12 @@ public @interface Logged {
    *     for all logged fields and methods in an annotated class
    */
   Naming defaultNaming() default Naming.USE_CODE_NAME;
+
+  /**
+   * Determines if epilogue should warn users of non-loggable elements within a @Logged class. Note
+   * that this will do nothing for opt-in logging.
+   *
+   * @return If false, disables "not a loggable data type" warnings.
+   */
+  boolean warnNotLoggable() default true;
 }
