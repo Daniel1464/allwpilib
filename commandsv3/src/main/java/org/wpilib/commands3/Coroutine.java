@@ -5,6 +5,8 @@
 package org.wpilib.commands3;
 
 import edu.wpi.first.units.measure.Time;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -17,15 +19,12 @@ import java.util.stream.Collectors;
 public final class Coroutine {
   private final Scheduler scheduler;
   private final Continuation backingContinuation;
+  private final ArrayList<Command> forkedCommands;
 
   Coroutine(Scheduler scheduler, ContinuationScope scope, Consumer<Coroutine> callback) {
     this.scheduler = scheduler;
-    this.backingContinuation =
-        new Continuation(
-            scope,
-            () -> {
-              callback.accept(this);
-            });
+    this.backingContinuation = new Continuation(scope, () -> callback.accept(this));
+    forkedCommands = new ArrayList<>();
   }
 
   /**
@@ -45,7 +44,7 @@ public final class Coroutine {
   @SuppressWarnings("InfiniteLoopStatement")
   public void park() {
     while (true) {
-      Coroutine.this.yield();
+      this.yield();
     }
   }
 
@@ -72,7 +71,19 @@ public final class Coroutine {
     // Shorthand; this is handy for user-defined compositions
     for (var command : commands) {
       scheduler.schedule(command);
+      forkedCommands.add(command);
     }
+  }
+
+  /**
+   * Cancels all commands that were forked.
+   * This can be used to create effective
+   */
+  public void cancelForkedCmds() {
+    for (var command : forkedCommands) {
+      scheduler.cancel(command);
+    }
+    forkedCommands.clear();
   }
 
   /**
