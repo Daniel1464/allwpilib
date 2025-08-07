@@ -1,5 +1,7 @@
 #include "frc/trajectory/ProfileState.h"
 
+namespace frc {
+
 /**
  * Represents a generic motion profile
  */
@@ -10,3 +12,5 @@ class MotionProfile {
   virtual State Calculate(const units::second_t& t, const State& current,
                             const State& goal) const {}
 };
+
+} // namespace frc
