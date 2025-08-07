@@ -10,10 +10,11 @@
 #include "units/angle.h"
 #include "units/angular_acceleration.h"
 #include "units/angular_velocity.h"
+#include <TrapezoidProfile.h>
 
 TEST(ProfiledPIDInputOutputTest, ContinuousInput1) {
-  frc::ProfiledPIDController<units::degree> controller{
-      0.0, 0.0, 0.0, {360_deg_per_s, 180_deg_per_s_sq}};
+  frc::ProfiledPIDController controller{
+      0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degree>{{360_deg_per_s, 180_deg_per_s_sq}}};
 
   controller.SetP(1);
   controller.EnableContinuousInput(-180_deg, 180_deg);
@@ -31,8 +32,8 @@ TEST(ProfiledPIDInputOutputTest, ContinuousInput1) {
 }
 
 TEST(ProfiledPIDInputOutputTest, ContinuousInput2) {
-  frc::ProfiledPIDController<units::degree> controller{
-      0.0, 0.0, 0.0, {360_deg_per_s, 180_deg_per_s_sq}};
+  frc::ProfiledPIDController controller{
+      0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degree>{{360_deg_per_s, 180_deg_per_s_sq}}};
 
   controller.SetP(1);
   controller.EnableContinuousInput(-units::radian_t{std::numbers::pi},
@@ -51,8 +52,8 @@ TEST(ProfiledPIDInputOutputTest, ContinuousInput2) {
 }
 
 TEST(ProfiledPIDInputOutputTest, ContinuousInput3) {
-  frc::ProfiledPIDController<units::degree> controller{
-      0.0, 0.0, 0.0, {360_deg_per_s, 180_deg_per_s_sq}};
+  frc::ProfiledPIDController controller{
+      0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degree>{{360_deg_per_s, 180_deg_per_s_sq}}};
 
   controller.SetP(1);
   controller.EnableContinuousInput(-units::radian_t{std::numbers::pi},
@@ -71,8 +72,8 @@ TEST(ProfiledPIDInputOutputTest, ContinuousInput3) {
 }
 
 TEST(ProfiledPIDInputOutputTest, ContinuousInput4) {
-  frc::ProfiledPIDController<units::degree> controller{
-      0.0, 0.0, 0.0, {360_deg_per_s, 180_deg_per_s_sq}};
+  frc::ProfiledPIDController controller{
+      0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degree>{{360_deg_per_s, 180_deg_per_s_sq}}};
 
   controller.SetP(1);
   controller.EnableContinuousInput(0_rad,
@@ -91,8 +92,8 @@ TEST(ProfiledPIDInputOutputTest, ContinuousInput4) {
 }
 
 TEST(ProfiledPIDInputOutputTest, ProportionalGainOutput) {
-  frc::ProfiledPIDController<units::degree> controller{
-      0.0, 0.0, 0.0, {360_deg_per_s, 180_deg_per_s_sq}};
+  frc::ProfiledPIDController controller{
+      0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degree>{{360_deg_per_s, 180_deg_per_s_sq}}};
 
   controller.SetP(4);
 
@@ -100,8 +101,8 @@ TEST(ProfiledPIDInputOutputTest, ProportionalGainOutput) {
 }
 
 TEST(ProfiledPIDInputOutputTest, IntegralGainOutput) {
-  frc::ProfiledPIDController<units::degree> controller{
-      0.0, 0.0, 0.0, {360_deg_per_s, 180_deg_per_s_sq}};
+  frc::ProfiledPIDController controller{
+      0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degree>{{360_deg_per_s, 180_deg_per_s_sq}}};
 
   controller.SetI(4);
 
@@ -115,8 +116,8 @@ TEST(ProfiledPIDInputOutputTest, IntegralGainOutput) {
 }
 
 TEST(ProfiledPIDInputOutputTest, DerivativeGainOutput) {
-  frc::ProfiledPIDController<units::degree> controller{
-      0.0, 0.0, 0.0, {360_deg_per_s, 180_deg_per_s_sq}};
+  frc::ProfiledPIDController controller{
+      0.0, 0.0, 0.0, frc::TrapezoidProfile<units::degree>{{360_deg_per_s, 180_deg_per_s_sq}}};
 
   controller.SetD(4);
 
