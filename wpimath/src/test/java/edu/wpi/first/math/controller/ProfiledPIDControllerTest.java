@@ -13,7 +13,8 @@ class ProfiledPIDControllerTest {
   @Test
   void testStartFromNonZeroPosition() {
     ProfiledPIDController controller =
-        new ProfiledPIDController(1.0, 0.0, 0.0, new TrapezoidProfile.Constraints(1.0, 1.0));
+        new ProfiledPIDController(
+            1.0, 0.0, 0.0, new TrapezoidProfile(new TrapezoidProfile.Constraints(1.0, 1.0)));
 
     controller.reset(20);
 

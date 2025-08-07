@@ -30,10 +30,11 @@ public class Robot extends TimedRobot {
 
   // Create a PID controller whose setpoint's change is subject to maximum
   // velocity and acceleration constraints.
-  private final TrapezoidProfile.Constraints m_constraints =
-      new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration);
+  private final TrapezoidProfile m_profile = new TrapezoidProfile(
+      new TrapezoidProfile.Constraints(kMaxVelocity, kMaxAcceleration)
+  );
   private final ProfiledPIDController m_controller =
-      new ProfiledPIDController(kP, kI, kD, m_constraints, kDt);
+      new ProfiledPIDController(kP, kI, kD, m_profile, kDt);
   private final ElevatorFeedforward m_feedforward = new ElevatorFeedforward(kS, kG, kV);
 
   public Robot() {

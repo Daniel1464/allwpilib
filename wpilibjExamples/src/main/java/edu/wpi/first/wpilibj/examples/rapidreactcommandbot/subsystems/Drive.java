@@ -55,9 +55,11 @@ public class Drive extends SubsystemBase {
           DriveConstants.kTurnP,
           DriveConstants.kTurnI,
           DriveConstants.kTurnD,
-          new TrapezoidProfile.Constraints(
-              DriveConstants.kMaxTurnRateDegPerS,
-              DriveConstants.kMaxTurnAccelerationDegPerSSquared));
+          new TrapezoidProfile(
+                  new TrapezoidProfile.Constraints(
+                          DriveConstants.kMaxTurnRateDegPerS,
+                          DriveConstants.kMaxTurnAccelerationDegPerSSquared))
+          );
   private final SimpleMotorFeedforward m_feedforward =
       new SimpleMotorFeedforward(DriveConstants.ks, DriveConstants.kv, DriveConstants.ka);
 

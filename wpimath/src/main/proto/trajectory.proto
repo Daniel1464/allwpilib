@@ -17,3 +17,8 @@ message ProtobufTrajectoryState {
 message ProtobufTrajectory {
   repeated ProtobufTrajectoryState states = 2;
 }
+
+message ProtobufProfileState {
+  double position = 1;
+  double velocity = 2;
+}

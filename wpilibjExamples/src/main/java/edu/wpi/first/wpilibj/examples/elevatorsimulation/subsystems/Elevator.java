@@ -32,7 +32,9 @@ public class Elevator implements AutoCloseable {
           Constants.kElevatorKp,
           Constants.kElevatorKi,
           Constants.kElevatorKd,
-          new TrapezoidProfile.Constraints(2.45, 2.45));
+          new TrapezoidProfile(
+              new TrapezoidProfile.Constraints(2.45, 2.45)
+          ));
   ElevatorFeedforward m_feedforward =
       new ElevatorFeedforward(
           Constants.kElevatorkS,

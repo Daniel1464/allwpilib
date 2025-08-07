@@ -14,7 +14,8 @@ class ProfiledPIDInputOutputTest {
   @Test
   void continuousInputTest1() {
     var controller =
-        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(360, 180));
+        new ProfiledPIDController(
+            0.0, 0.0, 0.0, new TrapezoidProfile(new TrapezoidProfile.Constraints(360, 180)));
 
     controller.setP(1);
     controller.enableContinuousInput(-180, 180);
@@ -33,7 +34,8 @@ class ProfiledPIDInputOutputTest {
   @Test
   void continuousInputTest2() {
     var controller =
-        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(360, 180));
+        new ProfiledPIDController(
+            0.0, 0.0, 0.0, new TrapezoidProfile(new TrapezoidProfile.Constraints(360, 180)));
 
     controller.setP(1);
     controller.enableContinuousInput(-Math.PI, Math.PI);
@@ -52,7 +54,8 @@ class ProfiledPIDInputOutputTest {
   @Test
   void continuousInputTest3() {
     var controller =
-        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(360, 180));
+        new ProfiledPIDController(
+            0.0, 0.0, 0.0, new TrapezoidProfile(new TrapezoidProfile.Constraints(360, 180)));
 
     controller.setP(1);
     controller.enableContinuousInput(-Math.PI, Math.PI);
@@ -71,7 +74,8 @@ class ProfiledPIDInputOutputTest {
   @Test
   void continuousInputTest4() {
     var controller =
-        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(360, 180));
+        new ProfiledPIDController(
+            0.0, 0.0, 0.0, new TrapezoidProfile(new TrapezoidProfile.Constraints(360, 180)));
 
     controller.setP(1);
     controller.enableContinuousInput(0, 2.0 * Math.PI);
@@ -90,7 +94,8 @@ class ProfiledPIDInputOutputTest {
   @Test
   void proportionalGainOutputTest() {
     var controller =
-        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(360, 180));
+        new ProfiledPIDController(
+            0.0, 0.0, 0.0, new TrapezoidProfile(new TrapezoidProfile.Constraints(360, 180)));
 
     controller.setP(4);
 
@@ -100,7 +105,8 @@ class ProfiledPIDInputOutputTest {
   @Test
   void integralGainOutputTest() {
     var controller =
-        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(360, 180));
+        new ProfiledPIDController(
+            0.0, 0.0, 0.0, new TrapezoidProfile(new TrapezoidProfile.Constraints(360, 180)));
 
     controller.setI(4);
 
@@ -116,7 +122,8 @@ class ProfiledPIDInputOutputTest {
   @Test
   void derivativeGainOutputTest() {
     var controller =
-        new ProfiledPIDController(0.0, 0.0, 0.0, new TrapezoidProfile.Constraints(360, 180));
+        new ProfiledPIDController(
+            0.0, 0.0, 0.0, new TrapezoidProfile(new TrapezoidProfile.Constraints(360, 180)));
 
     controller.setD(4);
 
