@@ -16,7 +16,6 @@
 #include "frc/MathUtil.h"
 #include "frc/controller/PIDController.h"
 #include "frc/trajectory/MotionProfile.h"
-#include "frc/trajectory/ProfileState.h"
 #include "units/time.h"
 
 namespace frc {
