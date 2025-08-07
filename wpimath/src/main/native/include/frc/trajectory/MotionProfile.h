@@ -9,7 +9,7 @@ namespace frc {
 template <class Distance>
 class MotionProfile {
   public:
-    virtual constexpr State Calculate(const units::second_t& t, 
+    virtual constexpr ProfileState<Distance> Calculate(const units::second_t& t, 
                                       const ProfileState<Distance>& current,
                                       const ProfileState<Distance>& goal) const; 
 };
