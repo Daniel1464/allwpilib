@@ -9,6 +9,7 @@
 #include "units/math.h"
 #include "units/time.h"
 #include "wpimath/MathShared.h"
+#include "frc/trajectory/ProfileState.h"
 
 namespace frc {
 
