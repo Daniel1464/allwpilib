@@ -6,6 +6,7 @@
 
 #include "units/math.h"
 #include "units/time.h"
+#include "frc/trajectory/ProfileState.h"
 
 namespace frc {
 
@@ -54,6 +55,7 @@ class ExponentialProfile {
   using kV_t = units::unit_t<KV>;
   using KA = units::compound_unit<Input, units::inverse<Acceleration>>;
   using kA_t = units::unit_t<KA>;
+  using State = ProfileState<Distance>;
 
   /**
    * Profile timing.
@@ -117,18 +119,6 @@ class ExponentialProfile {
 
     /// The State-Space 1x1 input matrix.
     B_t B{0};
-  };
-
-  /** Profile state. */
-  class State {
-   public:
-    /// The position at this state.
-    Distance_t position{0};
-
-    /// The velocity at this state.
-    Velocity_t velocity{0};
-
-    constexpr bool operator==(const State&) const = default;
   };
 
   /**

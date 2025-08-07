@@ -52,6 +52,7 @@ class TrapezoidProfile {
   using Acceleration =
       units::compound_unit<Velocity, units::inverse<units::seconds>>;
   using Acceleration_t = units::unit_t<Acceleration>;
+  using State = ProfileState<Distance>;
 
   /**
    * Profile constraints.
@@ -90,20 +91,6 @@ class TrapezoidProfile {
         throw std::domain_error("Constraints must be non-negative");
       }
     }
-  };
-
-  /**
-   * Profile state.
-   */
-  class State {
-   public:
-    /// The position at this state.
-    Distance_t position{0};
-
-    /// The velocity at this state.
-    Velocity_t velocity{0};
-
-    constexpr bool operator==(const State&) const = default;
   };
 
   /**
