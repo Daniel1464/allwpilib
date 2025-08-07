@@ -10,6 +10,7 @@
 #include "units/time.h"
 #include "wpimath/MathShared.h"
 #include "frc/trajectory/ProfileState.h"
+#include "frc/trajectory/MotionProfile.h"
 
 namespace frc {
 
@@ -44,7 +45,7 @@ namespace frc {
  * `IsFinished()`.
  */
 template <class Distance>
-class TrapezoidProfile {
+class TrapezoidProfile: public MotionProfile<Distance> {
  public:
   using Distance_t = units::unit_t<Distance>;
   using Velocity =
@@ -53,6 +54,7 @@ class TrapezoidProfile {
   using Acceleration =
       units::compound_unit<Velocity, units::inverse<units::seconds>>;
   using Acceleration_t = units::unit_t<Acceleration>;
+  using State = ProfileState<Distance>;
 
   /**
    * Profile constraints.
@@ -116,7 +118,7 @@ class TrapezoidProfile {
    * @param goal The desired state when the profile is complete.
    * @return The position and velocity of the profile at time t.
    */
-  constexpr frc::ProfileState<Distance> Calculate(units::second_t t, ProfileState<Distance> current, ProfileState<Distance> goal) {
+  constexpr State Calculate(units::second_t t, State current, State goal) override {
     m_direction = ShouldFlipAcceleration(current, goal) ? -1 : 1;
     m_current = Direct(current);
     goal = Direct(goal);
@@ -159,7 +161,7 @@ class TrapezoidProfile {
     m_endAccel = accelerationTime - cutoffBegin;
     m_endFullSpeed = m_endAccel + fullSpeedDist / m_constraints.maxVelocity;
     m_endDecel = m_endFullSpeed + accelerationTime - cutoffEnd;
-    ProfileState<Distance> result = m_current;
+    State result = m_current;
 
     if (t < m_endAccel) {
       result.velocity += t * m_constraints.maxAcceleration;
@@ -289,14 +291,14 @@ class TrapezoidProfile {
    * @param initial The initial state (usually the current state).
    * @param goal The desired state when the profile is complete.
    */
-  static constexpr bool ShouldFlipAcceleration(const ProfileState<Distance>& initial,
-                                               const ProfileState<Distance>& goal) {
+  static constexpr bool ShouldFlipAcceleration(const State& initial,
+                                               const State& goal) {
     return initial.position > goal.position;
   }
 
   // Flip the sign of the velocity and position if the profile is inverted
-  constexpr ProfileState<Distance> Direct(const ProfileState<Distance>& in) const {
-    ProfileState<Distance> result = in;
+  constexpr State Direct(const State& in) const {
+    State result = in;
     result.position *= m_direction;
     result.velocity *= m_direction;
     return result;
@@ -306,7 +308,7 @@ class TrapezoidProfile {
   int m_direction = 1;
 
   Constraints m_constraints;
-  ProfileState<Distance> m_current;
+  State m_current;
 
   units::second_t m_endAccel = 0_s;
   units::second_t m_endFullSpeed = 0_s;

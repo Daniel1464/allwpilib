@@ -15,7 +15,8 @@
 
 #include "frc/MathUtil.h"
 #include "frc/controller/PIDController.h"
-#include "frc/trajectory/TrapezoidProfile.h"
+#include "frc/trajectory/MotionProfile.h"
+#include "frc/trajectory/ProfileState.h"
 #include "units/time.h"
 
 namespace frc {
@@ -40,8 +41,6 @@ class ProfiledPIDController
   using Acceleration =
       units::compound_unit<Velocity, units::inverse<units::seconds>>;
   using Acceleration_t = units::unit_t<Acceleration>;
-  using State = typename TrapezoidProfile<Distance>::State;
-  using Constraints = typename TrapezoidProfile<Distance>::Constraints;
 
   /**
    * Allocates a ProfiledPIDController with the given constants for Kp, Ki, and
@@ -56,11 +55,10 @@ class ProfiledPIDController
    *                    default is 20 milliseconds. Must be positive.
    */
   constexpr ProfiledPIDController(double Kp, double Ki, double Kd,
-                                  Constraints constraints,
+                                  MotionProfile<Distance> profile,
                                   units::second_t period = 20_ms)
       : m_controller{Kp, Ki, Kd, period},
-        m_constraints{constraints},
-        m_profile{m_constraints} {
+        m_profile{profile} {
     if (!std::is_constant_evaluated()) {
       int instances = detail::IncrementAndGetProfiledPIDControllerInstances();
       wpi::math::MathSharedStore::ReportUsage("ProfiledPIDController",
@@ -194,7 +192,7 @@ class ProfiledPIDController
    *
    * @param goal The desired unprofiled setpoint.
    */
-  constexpr void SetGoal(State goal) { m_goal = goal; }
+  constexpr void SetGoal(ProfileState<Distance> goal) { m_goal = goal; }
 
   /**
    * Sets the goal for the ProfiledPIDController.
@@ -206,7 +204,7 @@ class ProfiledPIDController
   /**
    * Gets the goal for the ProfiledPIDController.
    */
-  constexpr State GetGoal() const { return m_goal; }
+  constexpr ProfileState<Distance> GetGoal() const { return m_goal; }
 
   /**
    * Returns true if the error is within the tolerance of the error.
@@ -216,27 +214,11 @@ class ProfiledPIDController
   constexpr bool AtGoal() const { return AtSetpoint() && m_goal == m_setpoint; }
 
   /**
-   * Set velocity and acceleration constraints for goal.
-   *
-   * @param constraints Velocity and acceleration constraints for goal.
-   */
-  constexpr void SetConstraints(Constraints constraints) {
-    m_constraints = constraints;
-    m_profile = TrapezoidProfile<Distance>{m_constraints};
-  }
-
-  /**
-   * Get the velocity and acceleration constraints for this controller.
-   * @return Velocity and acceleration constraints.
-   */
-  constexpr Constraints GetConstraints() { return m_constraints; }
-
-  /**
    * Returns the current setpoint of the ProfiledPIDController.
    *
    * @return The current setpoint.
    */
-  constexpr State GetSetpoint() const { return m_setpoint; }
+  constexpr ProfileState<Distance> GetSetpoint() const { return m_setpoint; }
 
   /**
    * Returns true if the error is within the tolerance of the error.
@@ -354,7 +336,7 @@ class ProfiledPIDController
    * @param measurement The current measurement of the process variable.
    * @param goal The new goal of the controller.
    */
-  constexpr double Calculate(Distance_t measurement, State goal) {
+  constexpr double Calculate(Distance_t measurement, ProfileState<Distance> goal) {
     SetGoal(goal);
     return Calculate(measurement);
   }
@@ -367,20 +349,6 @@ class ProfiledPIDController
   constexpr double Calculate(Distance_t measurement, Distance_t goal) {
     SetGoal(goal);
     return Calculate(measurement);
-  }
-
-  /**
-   * Returns the next output of the PID controller.
-   *
-   * @param measurement The current measurement of the process variable.
-   * @param goal        The new goal of the controller.
-   * @param constraints Velocity and acceleration constraints for goal.
-   */
-  constexpr double Calculate(
-      Distance_t measurement, Distance_t goal,
-      typename frc::TrapezoidProfile<Distance>::Constraints constraints) {
-    SetConstraints(constraints);
-    return Calculate(measurement, goal);
   }
 
   /**
@@ -425,19 +393,10 @@ class ProfiledPIDController
     builder.AddDoubleProperty(
         "izone", [this] { return GetIZone(); },
         [this](double value) { SetIZone(value); });
-    builder.AddDoubleProperty(
-        "maxVelocity", [this] { return GetConstraints().maxVelocity.value(); },
-        [this](double value) {
-          SetConstraints(
-              Constraints{Velocity_t{value}, GetConstraints().maxAcceleration});
-        });
-    builder.AddDoubleProperty(
-        "maxAcceleration",
-        [this] { return GetConstraints().maxAcceleration.value(); },
-        [this](double value) {
-          SetConstraints(
-              Constraints{GetConstraints().maxVelocity, Acceleration_t{value}});
-        });
+    Sendable* derivedSendable = dynamic_cast<Sendable*>(m_profile);
+    if (derivedSendable != nullptr) {
+        derivedSendable->InitSendable(builder);
+    }
     builder.AddDoubleProperty(
         "goal", [this] { return GetGoal().position.value(); },
         [this](double value) { SetGoal(Distance_t{value}); });
@@ -448,10 +407,9 @@ class ProfiledPIDController
   Distance_t m_minimumInput{0};
   Distance_t m_maximumInput{0};
 
-  typename frc::TrapezoidProfile<Distance>::Constraints m_constraints;
-  TrapezoidProfile<Distance> m_profile;
-  typename frc::TrapezoidProfile<Distance>::State m_goal;
-  typename frc::TrapezoidProfile<Distance>::State m_setpoint;
+  MotionProfile<Distance> m_profile;
+  ProfileState<Distance> m_goal;
+  ProfileState<Distance> m_setpoint;
 };
 
 }  // namespace frc

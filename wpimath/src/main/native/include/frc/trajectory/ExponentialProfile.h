@@ -7,6 +7,7 @@
 #include "units/math.h"
 #include "units/time.h"
 #include "frc/trajectory/ProfileState.h"
+#include "frc/trajectory/MotionProfile.h"
 
 namespace frc {
 
@@ -39,7 +40,7 @@ namespace frc {
  * `IsFinished()`.
  */
 template <class Distance, class Input>
-class ExponentialProfile {
+class ExponentialProfile: public MotionProfile<Distance> {
  public:
   using Distance_t = units::unit_t<Distance>;
   using Velocity =
@@ -145,7 +146,7 @@ class ExponentialProfile {
    * @return The position and velocity of the profile at time t.
    */
   constexpr State Calculate(const units::second_t& t, const State& current,
-                            const State& goal) const {
+                            const State& goal) const override {
     auto direction = ShouldFlipInput(current, goal) ? -1 : 1;
     auto u = direction * m_constraints.maxInput;
 
