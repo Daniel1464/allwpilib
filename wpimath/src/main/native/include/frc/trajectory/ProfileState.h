@@ -1,6 +1,6 @@
+#pragma once
 #include "units/math.h"
 #include "units/time.h"
-
 
 namespace frc {
 
