@@ -19,7 +19,7 @@ class ProfileState {
     /// The velocity at this state.
     units::unit_t<Velocity> velocity{0};
 
-  constexpr bool operator==(const State&) const = default;
+  constexpr bool operator==(const ProfileState&) const = default;
 };
 
 } // namespace frc
