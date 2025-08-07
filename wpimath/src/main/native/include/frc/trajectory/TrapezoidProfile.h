@@ -116,7 +116,7 @@ class TrapezoidProfile {
    * @param goal The desired state when the profile is complete.
    * @return The position and velocity of the profile at time t.
    */
-  constexpr ProfileState<Distance> Calculate(units::second_t t, ProfileState<Distance> current, ProfileState<Distance> goal) {
+  constexpr frc::ProfileState<Distance> Calculate(units::second_t t, ProfileState<Distance> current, ProfileState<Distance> goal) {
     m_direction = ShouldFlipAcceleration(current, goal) ? -1 : 1;
     m_current = Direct(current);
     goal = Direct(goal);
