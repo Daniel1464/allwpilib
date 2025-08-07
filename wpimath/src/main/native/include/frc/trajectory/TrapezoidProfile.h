@@ -118,7 +118,7 @@ class TrapezoidProfile: public MotionProfile<Distance> {
    * @param goal The desired state when the profile is complete.
    * @return The position and velocity of the profile at time t.
    */
-  constexpr State Calculate(units::second_t t, State current, State goal) override {
+  constexpr State Calculate(units::second_t& t, State current, State goal) override {
     m_direction = ShouldFlipAcceleration(current, goal) ? -1 : 1;
     m_current = Direct(current);
     goal = Direct(goal);
