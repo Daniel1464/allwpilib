@@ -10,7 +10,7 @@
 #include "units/angle.h"
 #include "units/angular_acceleration.h"
 #include "units/angular_velocity.h"
-#include <TrapezoidProfile.h>
+#include <frc/trajectory/TrapezoidProfile.h>
 
 TEST(ProfiledPIDInputOutputTest, ContinuousInput1) {
   frc::ProfiledPIDController controller{
