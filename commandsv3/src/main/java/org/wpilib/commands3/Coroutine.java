@@ -5,9 +5,8 @@
 package org.wpilib.commands3;
 
 import edu.wpi.first.units.measure.Time;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+
+import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 public final class Coroutine {
   private final Scheduler m_scheduler;
   private final Continuation m_backingContinuation;
+  private final Set<Command> forkedCommands = new HashSet<>();
 
   /**
    * Creates a new coroutine. Package-private; only the scheduler should be creating these.
@@ -101,9 +101,10 @@ public final class Coroutine {
    * command will not be scheduled, and the existing command will continue to run.
    *
    * @param commands The commands to fork.
+   * @return the forked commands, for convenience
    * @throws IllegalStateException if called anywhere other than the coroutine's running command
    */
-  public void fork(Command... commands) {
+  public Command[] fork(Command... commands) {
     requireMounted();
 
     // Check for user error; there's no reason to fork conflicting commands simultaneously
@@ -112,6 +113,33 @@ public final class Coroutine {
     // Shorthand; this is handy for user-defined compositions
     for (var command : commands) {
       m_scheduler.schedule(command);
+      forkedCommands.add(command);
+    }
+    return commands;
+  }
+
+  /**
+   * Cancels potentially running commands.
+   * If the command is not currently scheduled or running, this has no effect.
+   *
+   * @param commands the commands to cancel
+   */
+  public void cancel(Command... commands) {
+    requireMounted();
+
+    for (var command : commands) {
+      m_scheduler.cancel(command);
+    }
+  }
+
+  /**
+   * Cancels all commands forked by this coroutine.
+   */
+  public void cancelForkedCmds() {
+    requireMounted();
+
+    for (var command : forkedCommands) {
+      m_scheduler.cancel(command);
     }
   }
 
