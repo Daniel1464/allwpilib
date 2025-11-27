@@ -237,6 +237,21 @@ public class Trigger implements BooleanSupplier {
   }
 
   /**
+   * Composes multiple triggers with logical AND.
+   *
+   * @param first the first condition to compose with
+   * @param rest the other conditions to compose with
+   * @return A trigger which is active when all component triggers are active.
+   */
+  public Trigger and(BooleanSupplier first, BooleanSupplier... rest) {
+    var trigger = new Trigger(first);
+    for (var other : rest) {
+      trigger = trigger.and(other);
+    }
+    return trigger;
+  }
+
+  /**
    * Composes two triggers with logical OR.
    *
    * @param trigger the condition to compose with
@@ -244,6 +259,21 @@ public class Trigger implements BooleanSupplier {
    */
   public Trigger or(BooleanSupplier trigger) {
     return new Trigger(m_loop, () -> m_condition.getAsBoolean() || trigger.getAsBoolean());
+  }
+
+  /**
+   * Composes multiple triggers with logical OR.
+   *
+   * @param first the first condition to compose with
+   * @param rest the other conditions to compose with
+   * @return A trigger which is active when one of the component triggers are active.
+   */
+  public Trigger or(BooleanSupplier first, BooleanSupplier... rest) {
+    var trigger = new Trigger(first);
+    for (var other : rest) {
+      trigger = trigger.and(other);
+    }
+    return trigger;
   }
 
   /**
