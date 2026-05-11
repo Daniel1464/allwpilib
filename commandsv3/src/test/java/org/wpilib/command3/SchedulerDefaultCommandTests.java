@@ -204,12 +204,12 @@ class SchedulerDefaultCommandTests extends CommandTestBase {
     // we'd have 1 binding object per loop and quickly use a ton of memory
     var defaultCommandBindings = m_scheduler.getDefaultCommandBindingsFor(mech);
     assertEquals(
-        List.of("Mech[IDLE]", "Command 1", "Command 2", "Command 1"),
+        List.of("Command 1", "Command 2", "Command 1"),
         defaultCommandBindings.stream().map(b -> b.command().name()).toList());
 
     m_scheduler.run();
     assertEquals(
-        List.of("Mech[IDLE]", "Command 1", "Command 2"),
+        List.of("Command 1", "Command 2"),
         defaultCommandBindings.stream().map(b -> b.command().name()).toList());
   }
 }
