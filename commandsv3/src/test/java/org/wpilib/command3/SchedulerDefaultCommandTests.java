@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class SchedulerDefaultCommandTests extends CommandTestBase {
   @Test
   void globalDefaultCommandIsAlwaysUsed() {
-    var mech = new Mechanism("Mech", m_scheduler);
+    var mech = new DummyMechanism("Mech", m_scheduler);
     var defaultCommand = mech.run(Coroutine::park).named("Custom Default Command");
 
     mech.setDefaultCommand(defaultCommand);
@@ -34,7 +34,7 @@ class SchedulerDefaultCommandTests extends CommandTestBase {
 
   @Test
   void defaultCommandSetInOpmodeStops() {
-    var mech = new Mechanism("Mech", m_scheduler);
+    var mech = new DummyMechanism("Mech", m_scheduler);
     var initialDefaultCommand = mech.idle();
     mech.setDefaultCommand(initialDefaultCommand);
 
@@ -57,7 +57,7 @@ class SchedulerDefaultCommandTests extends CommandTestBase {
 
   @Test
   void defaultCommandSetInCommandStops() {
-    var mech = new Mechanism("Mech", m_scheduler);
+    var mech = new DummyMechanism("Mech", m_scheduler);
     var initialDefaultCommand = mech.idle();
     mech.setDefaultCommand(initialDefaultCommand);
 
@@ -86,7 +86,7 @@ class SchedulerDefaultCommandTests extends CommandTestBase {
 
   @Test
   void interruptingDefaultCommandInterruptsOwner() {
-    var mech = new Mechanism("Mech", m_scheduler);
+    var mech = new DummyMechanism("Mech", m_scheduler);
     var initialDefaultCommand = mech.idle();
     mech.setDefaultCommand(initialDefaultCommand);
 
@@ -116,7 +116,7 @@ class SchedulerDefaultCommandTests extends CommandTestBase {
 
   @Test
   void defaultCommandStackup() {
-    var mech = new Mechanism("Mech", m_scheduler);
+    var mech = new DummyMechanism("Mech", m_scheduler);
     var initialDefaultCommand = mech.idle();
     mech.setDefaultCommand(initialDefaultCommand);
 
@@ -168,7 +168,7 @@ class SchedulerDefaultCommandTests extends CommandTestBase {
   @Test
   void defaultCommandChangingDefaultCommand() {
     var mech =
-        new Mechanism("Mech", m_scheduler) {
+        new DummyMechanism("Mech", m_scheduler) {
           Command makeCommand1() {
             return run(co -> {
                   setDefaultCommand(makeCommand2());
