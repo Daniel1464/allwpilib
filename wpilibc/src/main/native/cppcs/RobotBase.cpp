@@ -2,9 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "frc/RobotBase.h"
+#include "wpi/framework/RobotBase.hpp"
 
-#ifdef __FRC_SYSTEMCORE__
+#include <stdint.h>
+
+#ifdef __FIRST_SYSTEMCORE__
 #include <dlfcn.h>
 #endif
 
@@ -13,46 +15,37 @@
 #include <string>
 #include <utility>
 
-#include <cameraserver/CameraServerShared.h>
-#include <hal/HALBase.h>
-#include <hal/UsageReporting.h>
-#include <networktables/NetworkTable.h>
-#include <networktables/NetworkTableInstance.h>
-#include <wpi/print.h>
-#include <wpi/timestamp.h>
-#include <wpimath/MathShared.h>
+#include "wpi/cameraserver/CameraServerShared.hpp"
+#include "wpi/driverstation/RobotState.hpp"
+#include "wpi/driverstation/internal/DriverStationBackend.hpp"
+#include "wpi/hal/HAL.h"
+#include "wpi/hal/UsageReporting.hpp"
+#include "wpi/math/util/MathShared.hpp"
+#include "wpi/nt/NetworkTable.hpp"
+#include "wpi/nt/NetworkTableInstance.hpp"
+#include "wpi/smartdashboard/SmartDashboard.hpp"
+#include "wpi/system/Errors.hpp"
+#include "wpi/system/WPILibVersion.hpp"
+#include "wpi/util/print.hpp"
+#include "wpi/util/timestamp.hpp"
 
-#include "WPILibVersion.h"
-#include "frc/DriverStation.h"
-#include "frc/Errors.h"
-#include "frc/Notifier.h"
-#include "frc/smartdashboard/SmartDashboard.h"
+static_assert(wpi::RuntimeType::SYSTEMCORE ==
+              static_cast<wpi::RuntimeType>(HAL_RUNTIME_SYSTEMCORE));
+static_assert(wpi::RuntimeType::SIMULATION ==
+              static_cast<wpi::RuntimeType>(HAL_RUNTIME_SIMULATION));
 
-static_assert(frc::RuntimeType::kRoboRIO ==
-              static_cast<frc::RuntimeType>(HAL_Runtime_RoboRIO));
-static_assert(frc::RuntimeType::kRoboRIO2 ==
-              static_cast<frc::RuntimeType>(HAL_Runtime_RoboRIO2));
-static_assert(frc::RuntimeType::kSimulation ==
-              static_cast<frc::RuntimeType>(HAL_Runtime_Simulation));
-static_assert(frc::RuntimeType::kSystemCore ==
-              static_cast<frc::RuntimeType>(HAL_Runtime_SystemCore));
+using SetCameraServerSharedFP = void (*)(wpi::CameraServerShared*);
 
-using SetCameraServerSharedFP = void (*)(frc::CameraServerShared*);
+using namespace wpi;
 
-using namespace frc;
-
-int frc::RunHALInitialization() {
+int wpi::RunHALInitialization() {
   if (!HAL_Initialize(500, 0)) {
     std::puts("FATAL ERROR: HAL could not be initialized");
     return -1;
   }
-  DriverStation::RefreshData();
+  wpi::internal::DriverStationBackend::RefreshData();
   HAL_ReportUsage("Language", "C++");
   HAL_ReportUsage("WPILibVersion", GetWPILibVersion());
-
-  if (!frc::Notifier::SetHALThreadPriority(true, 40)) {
-    FRC_ReportWarning("Setting HAL Notifier RT priority to 40 failed\n");
-  }
 
   std::puts("\n********** Robot program starting **********");
   return 0;
@@ -61,7 +54,7 @@ int frc::RunHALInitialization() {
 std::thread::id RobotBase::m_threadId;
 
 namespace {
-class WPILibCameraServerShared : public frc::CameraServerShared {
+class WPILibCameraServerShared : public wpi::CameraServerShared {
  public:
   void ReportUsage(std::string_view resource, std::string_view data) override {
     HAL_ReportUsage(resource, data);
@@ -86,12 +79,12 @@ class WPILibCameraServerShared : public frc::CameraServerShared {
 class WPILibMathShared : public wpi::math::MathShared {
  public:
   void ReportErrorV(fmt::string_view format, fmt::format_args args) override {
-    frc::ReportErrorV(err::Error, __FILE__, __LINE__, __FUNCTION__, format,
+    wpi::ReportErrorV(err::Error, __FILE__, __LINE__, __FUNCTION__, format,
                       args);
   }
 
   void ReportWarningV(fmt::string_view format, fmt::format_args args) override {
-    frc::ReportErrorV(warn::Warning, __FILE__, __LINE__, __FUNCTION__, format,
+    wpi::ReportErrorV(warn::Warning, __FILE__, __LINE__, __FUNCTION__, format,
                       args);
   }
 
@@ -99,14 +92,14 @@ class WPILibMathShared : public wpi::math::MathShared {
     HAL_ReportUsage(resource, data);
   }
 
-  units::second_t GetTimestamp() override {
-    return units::second_t{wpi::Now() * 1.0e-6};
+  wpi::units::second_t GetTimestamp() override {
+    return wpi::units::second_t{wpi::util::Now() * 1.0e-6};
   }
 };
 }  // namespace
 
 static void SetupCameraServerShared() {
-#ifdef __FRC_SYSTEMCORE__
+#ifdef __FIRST_SYSTEMCORE__
 #ifdef DYNAMIC_CAMERA_SERVER
 #ifdef DYNAMIC_CAMERA_SERVER_DEBUG
   auto cameraServerLib = dlopen("libcameraserverd.so", RTLD_NOW);
@@ -141,36 +134,44 @@ static void SetupMathShared() {
       std::make_unique<WPILibMathShared>());
 }
 
-bool RobotBase::IsEnabled() const {
-  return DriverStation::IsEnabled();
+bool RobotBase::IsEnabled() {
+  return RobotState::IsEnabled();
 }
 
-bool RobotBase::IsDisabled() const {
-  return DriverStation::IsDisabled();
+bool RobotBase::IsDisabled() {
+  return RobotState::IsDisabled();
 }
 
-bool RobotBase::IsAutonomous() const {
-  return DriverStation::IsAutonomous();
+bool RobotBase::IsAutonomous() {
+  return RobotState::IsAutonomous();
 }
 
-bool RobotBase::IsAutonomousEnabled() const {
-  return DriverStation::IsAutonomousEnabled();
+bool RobotBase::IsAutonomousEnabled() {
+  return RobotState::IsAutonomousEnabled();
 }
 
-bool RobotBase::IsTeleop() const {
-  return DriverStation::IsTeleop();
+bool RobotBase::IsTeleop() {
+  return RobotState::IsTeleop();
 }
 
-bool RobotBase::IsTeleopEnabled() const {
-  return DriverStation::IsTeleopEnabled();
+bool RobotBase::IsTeleopEnabled() {
+  return RobotState::IsTeleopEnabled();
 }
 
-bool RobotBase::IsTest() const {
-  return DriverStation::IsTest();
+bool RobotBase::IsUtility() {
+  return RobotState::IsUtility();
 }
 
-bool RobotBase::IsTestEnabled() const {
-  return DriverStation::IsTestEnabled();
+bool RobotBase::IsUtilityEnabled() {
+  return RobotState::IsUtilityEnabled();
+}
+
+int64_t RobotBase::GetOpModeId() {
+  return RobotState::GetOpModeId();
+}
+
+std::string RobotBase::GetOpMode() {
+  return RobotState::GetOpMode();
 }
 
 std::thread::id RobotBase::GetThreadId() {
@@ -187,13 +188,13 @@ RobotBase::RobotBase() {
   SetupCameraServerShared();
   SetupMathShared();
 
-  auto inst = nt::NetworkTableInstance::GetDefault();
+  auto inst = wpi::nt::NetworkTableInstance::GetDefault();
   // subscribe to "" to force persistent values to propagate to local
-  nt::SubscribeMultiple(inst.GetHandle(), {{std::string_view{}}});
+  wpi::nt::SubscribeMultiple(inst.GetHandle(), {{std::string_view{}}});
   if constexpr (!IsSimulation()) {
-    inst.StartServer("/home/systemcore/networktables.json");
+    inst.StartServer("/home/systemcore/networktables.json", "", "robot");
   } else {
-    inst.StartServer();
+    inst.StartServer("networktables.json", "", "robot");
   }
 
   // wait for the NT server to actually start
@@ -203,14 +204,15 @@ RobotBase::RobotBase() {
     std::this_thread::sleep_for(10ms);
     ++count;
     if (count > 100) {
-      wpi::print(stderr, "timed out while waiting for NT server to start\n");
+      wpi::util::print(stderr,
+                       "timed out while waiting for NT server to start\n");
       break;
     }
   }
 
   connListenerHandle =
-      inst.AddConnectionListener(false, [&](const nt::Event& event) {
-        if (event.Is(nt::EventFlags::kConnected)) {
+      inst.AddConnectionListener(false, [&](const wpi::nt::Event& event) {
+        if (event.Is(wpi::nt::EventFlags::CONNECTED)) {
           auto connInfo = event.GetConnectionInfo();
           HAL_ReportUsage(fmt::format("NT/{}", connInfo->remote_id), "");
         }
@@ -218,6 +220,6 @@ RobotBase::RobotBase() {
 
   SmartDashboard::init();
 
-  // Call DriverStation::RefreshData() to kick things off
-  DriverStation::RefreshData();
+  // Call wpi::internal::DriverStationBackend::RefreshData() to kick things off
+  wpi::internal::DriverStationBackend::RefreshData();
 }

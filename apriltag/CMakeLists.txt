@@ -39,7 +39,7 @@ if(WITH_JAVA)
     set(CMAKE_JNI_TARGET true)
 
     file(GLOB EJML_JARS "${WPILIB_BINARY_DIR}/wpimath/thirdparty/ejml/*.jar")
-    file(GLOB JACKSON_JARS "${WPILIB_BINARY_DIR}/wpiutil/thirdparty/jackson/*.jar")
+    file(GLOB AVAJE_JARS "${WPILIB_BINARY_DIR}/wpiutil/thirdparty/avaje/*.jar")
     find_file(
         OPENCV_JAR_FILE
         NAMES opencv-${OpenCV_VERSION_MAJOR}${OpenCV_VERSION_MINOR}${OpenCV_VERSION_PATCH}.jar
@@ -62,14 +62,14 @@ if(WITH_JAVA)
         apriltag_jar
         SOURCES ${JAVA_SOURCES}
         RESOURCES
-        NAMESPACE "edu/wpi/first/apriltag" ${JAVA_RESOURCES}
+        NAMESPACE "org/wpilib/vision/apriltag" ${JAVA_RESOURCES}
         INCLUDE_JARS
             wpimath_jar
             wpiunits_jar
             wpiutil_jar
             ${EJML_JARS}
             ${OPENCV_JAR_FILE}
-            ${JACKSON_JARS}
+            ${AVAJE_JARS}
         OUTPUT_NAME apriltag
         OUTPUT_DIR ${WPILIB_BINARY_DIR}/${java_lib_dest}
         GENERATE_NATIVE_HEADERS apriltag_jni_headers
@@ -107,10 +107,10 @@ if(WITH_JAVA_SOURCE)
 endif()
 
 generate_resources(
-    src/main/native/resources/edu/wpi/first/apriltag
+    src/main/native/resources/org/wpilib/vision/apriltag
     generated/main/cpp
     APRILTAG
-    frc
+    wpi::apriltag
     apriltag_resources_src
 )
 
@@ -120,7 +120,7 @@ add_library(apriltag ${apriltag_native_src} ${apriltag_resources_src} ${apriltag
 set_target_properties(apriltag PROPERTIES DEBUG_POSTFIX "d")
 
 set_property(TARGET apriltag PROPERTY FOLDER "libraries")
-target_compile_features(apriltag PUBLIC cxx_std_20)
+target_compile_features(apriltag PUBLIC cxx_std_23)
 wpilib_target_warnings(apriltag)
 
 target_link_libraries(apriltag wpimath)

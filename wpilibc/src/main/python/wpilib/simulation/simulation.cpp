@@ -1,25 +1,25 @@
 
 #include "semiwrap_init.wpilib.simulation._simulation.hpp"
 
-#ifndef __FRC_SYSTEMCORE__
-
-namespace frc::impl {
-void ResetSmartDashboardInstance();
-void ResetMotorSafety();
-} // namespace frc::impl
+#ifndef __FIRST_SYSTEMCORE__
 
 namespace wpi::impl {
+void ResetSmartDashboardInstance();
+void ResetMotorSafety();
+} // namespace wpi::impl
+
+namespace wpi::util::impl {
 void ResetSendableRegistry();
 } // namespace wpi::impl
 
 void resetWpilibSimulationData() {
-  frc::impl::ResetSmartDashboardInstance();
-  frc::impl::ResetMotorSafety();
-  wpi::impl::ResetSendableRegistry();
+  wpi::impl::ResetSmartDashboardInstance();
+  wpi::impl::ResetMotorSafety();
+  wpi::util::impl::ResetSendableRegistry();
 }
 
 void resetMotorSafety() {
-  frc::impl::ResetMotorSafety();
+  wpi::impl::ResetMotorSafety();
 }
 
 #else

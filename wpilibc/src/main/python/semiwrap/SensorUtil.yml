@@ -1,12 +1,7 @@
 classes:
-  frc::SensorUtil:
+  wpi::SensorUtil:
     nodelete: true
     methods:
-      CheckDigitalChannel:
-      CheckPWMChannel:
-      CheckAnalogInputChannel:
       GetDefaultCTREPCMModule:
       GetDefaultREVPHModule:
-      GetNumDigitalChannels:
-      GetNumAnalogInputs:
-      GetNumPwmChannels:
+      GetNumSmartIoPorts:

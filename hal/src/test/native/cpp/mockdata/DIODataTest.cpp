@@ -2,16 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+#include "wpi/hal/simulation/DIOData.h"
+
 #include <string>
 
 #include <gtest/gtest.h>
 
-#include "hal/DIO.h"
-#include "hal/HAL.h"
-#include "hal/handles/HandlesInternal.h"
-#include "hal/simulation/DIOData.h"
+#include "wpi/hal/DIO.h"
+#include "wpi/hal/Errors.h"
+#include "wpi/hal/HAL.h"
+#include "wpi/hal/handles/HandlesInternal.hpp"
 
-namespace hal {
+namespace wpi::hal {
 
 std::string gTestDigitalIoCallbackName;
 HAL_Value gTestDigitalIoCallbackValue;
@@ -39,10 +41,10 @@ TEST(DigitalIoSimTest, DigitalIoInitialization) {
   channel = 8000;
   gTestDigitalIoCallbackName = "Unset";
   digitalIoHandle = HAL_InitializeDIOPort(channel, true, nullptr, &status);
-  EXPECT_EQ(HAL_kInvalidHandle, digitalIoHandle);
+  EXPECT_EQ(HAL_INVALID_HANDLE, digitalIoHandle);
   EXPECT_EQ(HAL_USE_LAST_ERROR, status);
   HAL_GetLastError(&status);
-  EXPECT_EQ(RESOURCE_OUT_OF_RANGE, status);
+  EXPECT_EQ(HAL_RESOURCE_OUT_OF_RANGE, status);
   EXPECT_STREQ("Unset", gTestDigitalIoCallbackName.c_str());
 
   // Successful setup
@@ -50,7 +52,7 @@ TEST(DigitalIoSimTest, DigitalIoInitialization) {
   channel = INDEX_TO_TEST;
   gTestDigitalIoCallbackName = "Unset";
   digitalIoHandle = HAL_InitializeDIOPort(channel, true, nullptr, &status);
-  EXPECT_TRUE(HAL_kInvalidHandle != digitalIoHandle);
+  EXPECT_TRUE(HAL_INVALID_HANDLE != digitalIoHandle);
   EXPECT_EQ(0, status);
   EXPECT_STREQ("Initialized", gTestDigitalIoCallbackName.c_str());
 
@@ -59,14 +61,14 @@ TEST(DigitalIoSimTest, DigitalIoInitialization) {
   channel = INDEX_TO_TEST;
   gTestDigitalIoCallbackName = "Unset";
   digitalIoHandle = HAL_InitializeDIOPort(channel, true, nullptr, &status);
-  EXPECT_EQ(HAL_kInvalidHandle, digitalIoHandle);
+  EXPECT_EQ(HAL_INVALID_HANDLE, digitalIoHandle);
   EXPECT_EQ(HAL_USE_LAST_ERROR, status);
   HAL_GetLastError(&status);
-  EXPECT_EQ(RESOURCE_IS_ALLOCATED, status);
+  EXPECT_EQ(HAL_RESOURCE_IS_ALLOCATED, status);
   EXPECT_STREQ("Unset", gTestDigitalIoCallbackName.c_str());
 
   // Reset, should allow you to re-register
-  hal::HandleBase::ResetGlobalHandles();
+  wpi::hal::HandleBase::ResetGlobalHandles();
   HALSIM_ResetDIOData(INDEX_TO_TEST);
   callbackId = HALSIM_RegisterDIOInitializedCallback(
       INDEX_TO_TEST, &TestDigitalIoInitializationCallback, &callbackParam,
@@ -76,10 +78,10 @@ TEST(DigitalIoSimTest, DigitalIoInitialization) {
   channel = INDEX_TO_TEST;
   gTestDigitalIoCallbackName = "Unset";
   digitalIoHandle = HAL_InitializeDIOPort(channel, true, nullptr, &status);
-  EXPECT_TRUE(HAL_kInvalidHandle != digitalIoHandle);
+  EXPECT_TRUE(HAL_INVALID_HANDLE != digitalIoHandle);
   EXPECT_EQ(0, status);
   EXPECT_STREQ("Initialized", gTestDigitalIoCallbackName.c_str());
   HALSIM_CancelDIOInitializedCallback(INDEX_TO_TEST, callbackId);
 }
 
-}  // namespace hal
+}  // namespace wpi::hal

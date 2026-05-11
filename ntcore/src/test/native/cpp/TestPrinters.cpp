@@ -2,15 +2,15 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "TestPrinters.h"
+#include "TestPrinters.hpp"
 
-#include "Handle.h"
-#include "PubSubOptions.h"
-#include "net/Message.h"
-#include "networktables/NetworkTableValue.h"
-#include "ntcore_cpp.h"
+#include "Handle.hpp"
+#include "PubSubOptions.hpp"
+#include "net/Message.hpp"
+#include "wpi/nt/NetworkTableValue.hpp"
+#include "wpi/nt/ntcore_cpp.hpp"
 
-namespace nt {
+namespace wpi::nt {
 
 void PrintTo(const Event& event, std::ostream* os) {
   *os << "Event{listener=";
@@ -25,26 +25,26 @@ void PrintTo(const Event& event, std::ostream* os) {
 void PrintTo(const Handle& handle, std::ostream* os) {
   *os << "Handle{";
   switch (handle.GetType()) {
-    case Handle::kListener:
-      *os << "kListener";
+    case Handle::LISTENER:
+      *os << "LISTENER";
       break;
-    case Handle::kListenerPoller:
-      *os << "kListenerPoller";
+    case Handle::LISTENER_POLLER:
+      *os << "LISTENER_POLLER";
       break;
-    case Handle::kEntry:
-      *os << "kEntry";
+    case Handle::ENTRY:
+      *os << "ENTRY";
       break;
-    case Handle::kInstance:
-      *os << "kInstance";
+    case Handle::INSTANCE:
+      *os << "INSTANCE";
       break;
-    case Handle::kTopic:
+    case Handle::TOPIC:
       *os << "kTopic";
       break;
-    case Handle::kSubscriber:
-      *os << "kSubscriber";
+    case Handle::SUBSCRIBER:
+      *os << "SUBSCRIBER";
       break;
-    case Handle::kPublisher:
-      *os << "kPublisher";
+    case Handle::PUBLISHER:
+      *os << "PUBLISHER";
       break;
     default:
       *os << "UNKNOWN";
@@ -105,4 +105,4 @@ void PrintTo(const PubSubOptionsImpl& options, std::ostream* os) {
       << ", keepDuplicates=" << options.keepDuplicates << '}';
 }
 
-}  // namespace nt
+}  // namespace wpi::nt

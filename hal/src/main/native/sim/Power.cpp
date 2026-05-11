@@ -2,22 +2,21 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "hal/Power.h"
+#include "wpi/hal/Power.h"
 
-#include "mockdata/RoboRioDataInternal.h"
+#include "mockdata/RoboRioDataInternal.hpp"
 
-using namespace hal;
+using namespace wpi::hal;
 
-namespace hal::init {
+namespace wpi::hal::init {
 void InitializePower() {}
-}  // namespace hal::init
+}  // namespace wpi::hal::init
 
 // TODO: Fix the naming in here
 extern "C" {
 double HAL_GetVinVoltage(int32_t* status) {
   return SimRoboRioData->vInVoltage;
 }
-void HAL_SetUserRailEnabled5V(HAL_Bool enabled, int32_t* status) {}
 double HAL_GetUserVoltage3V3(int32_t* status) {
   return SimRoboRioData->userVoltage3V3;
 }

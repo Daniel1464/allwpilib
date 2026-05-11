@@ -3,12 +3,12 @@ macro(add_doxygen_docs)
         apriltag
         cameraserver
         cscore
-        fieldImages
+        fields
         hal
         ntcore
         romiVendordep
         wpilibc
-        wpilibNewCommands
+        commandsv2
         wpimath
         wpinet
         wpiutil
@@ -24,8 +24,7 @@ macro(add_doxygen_docs)
             set(DOXYGEN_WARN_AS_ERROR "FAIL_ON_WARNINGS_PRINT")
             list(FILTER dirs EXCLUDE REGEX fmt|memory|units)
             list(
-                APPEND
-                DOXYGEN_EXCLUDE_PATTERNS
+                APPEND DOXYGEN_EXCLUDE_PATTERNS
                 # apriltag
                 "apriltag_pose.h"
                 # llvm

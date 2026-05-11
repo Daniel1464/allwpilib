@@ -2,26 +2,26 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "hal/CTREPCM.h"
+#include "wpi/hal/CTREPCM.h"
 
 #include <string>
 
 #include <fmt/format.h>
 
-#include "HALInitializer.h"
-#include "HALInternal.h"
-#include "PortsInternal.h"
-#include "hal/CANAPI.h"
-#include "hal/Errors.h"
-#include "hal/handles/IndexedHandleResource.h"
+#include "HALInitializer.hpp"
+#include "PortsInternal.hpp"
+#include "wpi/hal/CANAPI.h"
+#include "wpi/hal/ErrorHandling.hpp"
+#include "wpi/hal/Errors.h"
+#include "wpi/hal/handles/IndexedHandleResource.hpp"
 
-using namespace hal;
+using namespace wpi::hal;
 
 static constexpr HAL_CANManufacturer manufacturer =
-    HAL_CANManufacturer::HAL_CAN_Man_kCTRE;
+    HAL_CANManufacturer::HAL_CAN_MAN_CTRE;
 
 static constexpr HAL_CANDeviceType deviceType =
-    HAL_CANDeviceType::HAL_CAN_Dev_kPneumatics;
+    HAL_CANDeviceType::HAL_CAN_DEV_PNEUMATICS;
 
 static constexpr int32_t Status1 = 0x50;
 static constexpr int32_t StatusSolFaults = 0x51;
@@ -126,7 +126,7 @@ union PcmDebug {
 namespace {
 struct PCM {
   HAL_CANHandle canHandle;
-  wpi::mutex lock;
+  wpi::util::mutex lock;
   std::string previousAllocation;
   PcmControl control;
   PcmControlSetOneShotDur oneShot;
@@ -134,16 +134,16 @@ struct PCM {
 }  // namespace
 
 static IndexedHandleResource<HAL_CTREPCMHandle, PCM, kNumCTREPCMModules,
-                             HAL_HandleEnum::CTREPCM>* pcmHandles;
+                             HAL_HandleEnum::CTRE_PCM>* pcmHandles;
 
-namespace hal::init {
+namespace wpi::hal::init {
 void InitializeCTREPCM() {
   static IndexedHandleResource<HAL_CTREPCMHandle, PCM, kNumCTREPCMModules,
-                               HAL_HandleEnum::CTREPCM>
+                               HAL_HandleEnum::CTRE_PCM>
       pH;
   pcmHandles = &pH;
 }
-}  // namespace hal::init
+}  // namespace wpi::hal::init
 
 #define READ_PACKET(type, frame, failureValue)                         \
   auto pcm = pcmHandles->Get(handle);                                  \
@@ -178,27 +178,21 @@ extern "C" {
 HAL_CTREPCMHandle HAL_InitializeCTREPCM(int32_t busId, int32_t module,
                                         const char* allocationLocation,
                                         int32_t* status) {
-  hal::init::CheckInit();
+  wpi::hal::init::CheckInit();
 
-  HAL_CTREPCMHandle handle;
-  auto pcm = pcmHandles->Allocate(module, &handle, status);
+  auto resource = pcmHandles->Allocate(module, "CTRE PCM");
 
-  if (*status != 0) {
-    if (pcm) {
-      hal::SetLastErrorPreviouslyAllocated(status, "CTRE PCM", module,
-                                           pcm->previousAllocation);
-    } else {
-      hal::SetLastErrorIndexOutOfRange(status, "Invalid Index for CTRE PCM", 0,
-                                       kNumCTREPCMModules - 1, module);
-    }
-    return HAL_kInvalidHandle;  // failed to allocate. Pass error back.
+  if (!resource) {
+    *status = resource.error();
+    return HAL_INVALID_HANDLE;  // failed to allocate. Pass error back.
   }
 
+  auto [handle, pcm] = *resource;
   pcm->canHandle =
       HAL_InitializeCAN(busId, manufacturer, module, deviceType, status);
   if (*status != 0) {
     pcmHandles->Free(handle);
-    return HAL_kInvalidHandle;
+    return HAL_INVALID_HANDLE;
   }
 
   std::memset(&pcm->oneShot, 0, sizeof(pcm->oneShot));
@@ -210,7 +204,7 @@ HAL_CTREPCMHandle HAL_InitializeCTREPCM(int32_t busId, int32_t module,
   HAL_SetCTREPCMClosedLoopControl(handle, true, status);
   if (*status != 0) {
     HAL_FreeCTREPCM(handle);
-    return HAL_kInvalidHandle;
+    return HAL_INVALID_HANDLE;
   }
   return handle;
 }
@@ -359,9 +353,8 @@ void HAL_ClearAllCTREPCMStickyFaults(HAL_CTREPCMHandle handle,
 void HAL_FireCTREPCMOneShot(HAL_CTREPCMHandle handle, int32_t index,
                             int32_t* status) {
   if (index > 7 || index < 0) {
-    *status = PARAMETER_OUT_OF_RANGE;
-    hal::SetLastError(
-        status,
+    *status = MakeError(
+        HAL_PARAMETER_OUT_OF_RANGE,
         fmt::format("Only [0-7] are valid index values. Requested {}", index));
     return;
   }
@@ -391,9 +384,8 @@ void HAL_FireCTREPCMOneShot(HAL_CTREPCMHandle handle, int32_t index,
 void HAL_SetCTREPCMOneShotDuration(HAL_CTREPCMHandle handle, int32_t index,
                                    int32_t durMs, int32_t* status) {
   if (index > 7 || index < 0) {
-    *status = PARAMETER_OUT_OF_RANGE;
-    hal::SetLastError(
-        status,
+    *status = MakeError(
+        HAL_PARAMETER_OUT_OF_RANGE,
         fmt::format("Only [0-7] are valid index values. Requested {}", index));
     return;
   }

@@ -5,16 +5,17 @@ WPILib is normally built with Gradle, however for some systems, such as Linux ba
 ## Libraries that get built
 * apriltag
 * cameraserver
+* commandsv2
 * commandsv3
 * cscore
-* fieldImages
+* datalog
+* fields
 * hal (simulation HAL only)
 * ntcore
 * romiVendordep
 * simulation extensions
 * wpigui
-* wpilib (wpilibc, wpilibj, and myRobot)
-* wpilibNewCommands
+* wpilib (wpilibc, wpilibj, and developerRobot)
 * wpimath
 * wpinet
 * wpiunits
@@ -26,17 +27,16 @@ WPILib is normally built with Gradle, however for some systems, such as Linux ba
 * glass
 * outlineviewer
 * sysid
+* wpical
 * halsim_gui (if simulation extensions are enabled)
 
-By default, all libraries get built with a default CMake setup. The libraries are built as shared libraries, and include the JNI libraries as well as building the Java JARs. Data Log Tool and the roboRIO Team Number Setter are only built if libssh is available.
+By default, all libraries get built with a default CMake setup. The libraries are built as shared libraries, and include the JNI libraries as well as building the Java JARs. Data Log Tool is only built if libssh is available.
 
 ## Prerequisites
 
 OpenCV needs to be findable by CMake. On systems like the Jetson, this is installed by default. Otherwise, you will need to build OpenCV from source and install it.
 
-If you want JNI and Java, you will need a JDK of at least version 21 installed. In addition, you need a `JAVA_HOME` environment variable set properly and set to the JDK directory.
-
-If you are building with unit tests or simulation modules, you will also need an Internet connection for the initial setup process, as CMake will clone google-test and imgui from GitHub.
+If you want JNI and Java, you will need a JDK of at least version 25 installed. In addition, you need a `JAVA_HOME` environment variable set properly and set to the JDK directory.
 
 ## Build Options
 
@@ -61,7 +61,7 @@ The following build options are available:
 * `WITH_TESTS` (ON Default)
   * This option will build C++ unit tests. These can be run via `ctest -C <config>`, where `<config>` is the build configuration, e.g. `Debug` or `Release`.
 * `WITH_WPILIB` (ON Default)
-  * This option will build the HAL and wpilibc/j during the build. The HAL is the simulation HAL, unless the external HAL options are used. The CMake build has no capability to build for the roboRIO.
+  * This option will build the HAL and wpilibc/j during the build. The HAL is the simulation HAL, unless the external HAL options are used. The CMake build has no capability to build for Systemcore.
 * `WITH_WPIMATH` (ON Default)
   * This option will build the wpimath library. This option must be on to build wpilib.
 * `WITH_WPIUNITS` (`WITH_JAVA` Default)
@@ -89,11 +89,11 @@ If you want, you can also use `ccmake` in order to visually set these properties
 
 ## Presets
 
-The WPILib CMake setup has a variety of presets for common configurations and options used. The default sets the generator to Ninja and build directory to `build-cmake`. The other presets are `with-java` (sets `WITH_JAVA=ON`), `sccache` (sets the C/C++ compiler launcher to sccache), and `with-java-sccache` (a comibination of `with-java` and `sccache`.
+The WPILib CMake setup has a variety of presets for common configurations and options used. The default sets the generator to Ninja and build directory to `build-cmake`. The other presets are `with-java` (sets `WITH_JAVA=ON`), `sccache` (sets the C/C++ compiler launcher to sccache), and `with-java-sccache` (a combination of `with-java` and `sccache`).
 
 ## Building
 
-Once you have CMake setup. run `cmake --build .` from the directory you configured CMake in. This will build all libraries possible. We recommend running `cmake --build .` with multiple jobs. For allwpilib, a good rule of thumb is one worker for every 2 GB of available RAM. To run a multiple job build, run the following command with x being the number of jobs you want.
+Once you have CMake setup. run `cmake --build .` from the directory you configured CMake in. This will build all libraries possible. We recommend running `cmake --build .` with multiple jobs. For allwpilib, a good rule of thumb is one worker for every 2 GB of available RAM. To run a multi-job build, run the following command with x being the number of jobs you want.
 
 ```
 cmake --build . --parallel x
@@ -162,7 +162,7 @@ file(GLOB_RECURSE JAVA_SOURCES *.java)
 # If you want Gradle compatibility or you are using one of the templates/examples, comment out the above line and uncomment this line instead:
 # file(GLOB_RECURSE JAVA_SOURCES src/main/java/*.java)
 add_jar(robot ${JAVA_SOURCES}
-    INCLUDE_JARS apriltag_jar cscore_jar hal_jar ntcore_jar wpilibNewCommands_jar wpimath_jar wpinet_jar wpiutil_jar wpiunits_jar wpilibj_jar ${opencvJar})
+    INCLUDE_JARS apriltag_jar cscore_jar hal_jar ntcore_jar commandsv2_jar wpimath_jar wpinet_jar wpiutil_jar wpiunits_jar wpilibj_jar ${opencvJar})
 export_jars(TARGETS robot FILE robot.jar)
 ```
 This includes all the built JARs except for the vendordeps. If you are not using a JAR/library, you may remove it.
@@ -176,7 +176,7 @@ After that, run `cmake --build .` to create your JAR file. To execute the JAR fi
 
 ## Using vendordeps
 
-Vendordeps are not included as part of the `wpilib` CMake package. However, if you want to use a vendordep, you need to use `find_package(VENDORDEP)`, where `VENDORDEP` is the name of the vendordep (case-sensitive), like `xrpVendordep` or `romiVendordep`. Note that wpilibNewCommands, while a vendordep in normal robot projects, is not built as a vendordep in CMake, and is instead included as part of the `wpilib` CMake package. After you used `find_package`, you can reference the vendordep library like normal, either by using `target_link_libraries` for C++ or `add_jar` for Java.
+Vendordeps are not included as part of the `wpilib` CMake package. However, if you want to use a vendordep, you need to use `find_package(VENDORDEP)`, where `VENDORDEP` is the name of the vendordep (case-sensitive), like `xrpVendordep` or `romiVendordep`. Note that commandsv2, while a vendordep in normal robot projects, is not built as a vendordep in CMake, and is instead included as part of the `wpilib` CMake package. After you used `find_package`, you can reference the vendordep library like normal, either by using `target_link_libraries` for C++ or `add_jar` for Java.
 
 ## Troubleshooting
 Below are some common issues that are run into when building.
@@ -211,10 +211,11 @@ If you are missing Java, you will get a message like the following.
 ```
 CMake Error at /usr/share/cmake-3.5/Modules/FindPackageHandleStandardArgs.cmake:148 (message):
   Could NOT find Java (missing: Java_JAVA_EXECUTABLE Java_JAR_EXECUTABLE
-  Java_JAVAC_EXECUTABLE Java_JAVAH_EXECUTABLE Java_JAVADOC_EXECUTABLE)
+  Java_JAVAC_EXECUTABLE Java_JAVAH_EXECUTABLE Java_JAVADOC_EXECUTABLE
+  Development)
 ```
 
-If this happens, make sure you have a JDK of at least version 8 installed, and that your JAVA_HOME variable is set properly to point to the JDK.
+If this happens, make sure you have a JDK of at least version 25 installed, and that your JAVA_HOME variable is set properly to point to the JDK.
 
 In addition, if you do not need Java, you can disable it with `-DWITH_JAVA=OFF`.
 
@@ -224,7 +225,7 @@ If one of the libraries can't be found, you will get an error similar to this on
 
 ```
 java.io.IOException: wpiHaljni could not be loaded from path or an embedded resource.
-        attempted to load for platform /windows/x86-64/
+        attempted to load for platform windows-x86_64
 Last Load Error:
 C:\Program Files (x86)\allwpilib\bin\wpiHaljni.dll: Can't find dependent libraries
 ```

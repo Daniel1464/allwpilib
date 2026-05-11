@@ -3,7 +3,6 @@ import pytest
 from ntcore import NetworkTableInstance, NetworkTableType
 from ntcore.util import ntproperty, ChooserControl
 
-
 # def test_autoupdatevalue(nt):
 
 #     # tricksy: make sure that this works *before* initialization
@@ -27,7 +26,7 @@ from ntcore.util import ntproperty, ChooserControl
 
 
 def test_ntproperty(nt: NetworkTableInstance):
-    class Foo(object):
+    class Foo:
         robotTime = ntproperty(
             "/SmartDashboard/robotTime", 0.0, writeDefault=False, inst=nt
         )
@@ -44,7 +43,7 @@ def test_ntproperty(nt: NetworkTableInstance):
             "/SmartDashboard/testFloatArray",
             [1.1, 1.2, 1.3],
             writeDefault=True,
-            type=NetworkTableType.kFloatArray,
+            type=NetworkTableType.FLOAT_ARRAY,
             inst=nt,
         )
 
@@ -85,14 +84,14 @@ def test_ntproperty(nt: NetworkTableInstance):
 def test_ntproperty_emptyarray(nt: NetworkTableInstance):
     with pytest.raises(TypeError):
 
-        class Foo1(object):
+        class Foo1:
             testArray = ntproperty(
                 "/SmartDashboard/testArray", [], writeDefault=True, inst=nt
             )
 
     with pytest.raises(TypeError):
 
-        class Foo2(object):
+        class Foo2:
             testArray = ntproperty(
                 "/SmartDashboard/testArray", [], writeDefault=False, inst=nt
             )
@@ -106,7 +105,7 @@ def test_ntproperty_multitest(nt: NetworkTableInstance):
     pyfrc tests
     """
 
-    class Foo(object):
+    class Foo:
         robotTime = ntproperty(
             "/SmartDashboard/robotTime", 0.0, writeDefault=False, inst=nt
         )

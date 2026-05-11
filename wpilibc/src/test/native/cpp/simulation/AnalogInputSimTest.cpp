@@ -2,15 +2,15 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "frc/simulation/AnalogInputSim.h"  // NOLINT(build/include_order)
+#include "wpi/simulation/AnalogInputSim.hpp"
 
 #include <gtest/gtest.h>
-#include <hal/HAL.h>
 
-#include "callback_helpers/TestCallbackHelpers.h"
-#include "frc/AnalogInput.h"
+#include "callback_helpers/TestCallbackHelpers.hpp"
+#include "wpi/hal/HAL.h"
+#include "wpi/hardware/discrete/AnalogInput.hpp"
 
-namespace frc::sim {
+namespace wpi::sim {
 
 TEST(AnalogInputSimTest, SetInitialized) {
   HAL_Initialize(500, 0);
@@ -62,34 +62,4 @@ TEST(AnalogInputSimTest, SetVoltage) {
   }
 }
 
-TEST(AnalogInputSimTest, SetOverSampleBits) {
-  HAL_Initialize(500, 0);
-  AnalogInput input{5};
-  AnalogInputSim sim(input);
-
-  IntCallback callback;
-  auto cb = sim.RegisterOversampleBitsCallback(callback.GetCallback(), false);
-
-  input.SetOversampleBits(3504);
-  EXPECT_EQ(3504, sim.GetOversampleBits());
-  EXPECT_EQ(3504, input.GetOversampleBits());
-  EXPECT_TRUE(callback.WasTriggered());
-  EXPECT_EQ(3504, callback.GetLastValue());
-}
-
-TEST(AnalogInputSimTest, SetAverageBits) {
-  HAL_Initialize(500, 0);
-  AnalogInput input{5};
-  AnalogInputSim sim(input);
-
-  IntCallback callback;
-  auto cb = sim.RegisterAverageBitsCallback(callback.GetCallback(), false);
-
-  input.SetAverageBits(3504);
-  EXPECT_EQ(3504, sim.GetAverageBits());
-  EXPECT_EQ(3504, input.GetAverageBits());
-  EXPECT_TRUE(callback.WasTriggered());
-  EXPECT_EQ(3504, callback.GetLastValue());
-}
-
-}  // namespace frc::sim
+}  // namespace wpi::sim

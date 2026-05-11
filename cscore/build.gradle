@@ -2,7 +2,7 @@ import org.gradle.internal.os.OperatingSystem
 
 ext {
     nativeName = 'cscore'
-    devMain = 'edu.wpi.first.cscore.DevMain'
+    devMain = 'org.wpilib.cscore.DevMain'
 }
 
 // Removed because having the objective-cpp plugin added breaks
@@ -23,7 +23,6 @@ model {
             enableCheckTask true
             javaCompileTasks << compileJava
             jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.systemcore)
-            jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.linuxarm32)
             jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.linuxarm64)
 
             sources {
