@@ -65,14 +65,14 @@ public class NumericConstraintProcessor extends AbstractProcessor {
       }
       var arguments = constraint.split(op.repr());
       if (arguments.length != 2) {
-        continue;
+        printError(element, "Constraint has invalid syntax: " + constraint);
+        return;
       }
       if (validParams.contains(arguments[0].trim()) || validParams.contains(arguments[1].trim())) {
         return;
       }
       printError(element, "Constraint has invalid reference (check your spelling): " + constraint);
     }
-    printError(element, "Could not parse variable from constraint: " + constraint);
   }
 
   private void printError(Element element, String message) {
