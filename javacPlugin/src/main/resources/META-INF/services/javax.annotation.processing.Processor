@@ -1,1 +1,2 @@
 org.wpilib.javacplugin.PostConstructionInitializerProcessor
+org.wpilib.javacplugin.NumericConstraintProcessor

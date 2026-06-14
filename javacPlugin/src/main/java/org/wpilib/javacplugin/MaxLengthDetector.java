@@ -10,8 +10,6 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.Tree.Kind;
-import com.sun.source.tree.UnaryTree;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
@@ -139,8 +137,8 @@ public class MaxLengthDetector implements TaskListener {
         }
       }
 
-      Integer constValue = evaluateIntConstant(valueExpr);
-      if (constValue != null && constValue < 1) {
+      Number constValue = ConstEvaluator.evaluateNumber(m_trees, m_root, valueExpr);
+      if (constValue != null && constValue.intValue() < 1) {
         m_trees.printMessage(
             Diagnostic.Kind.ERROR,
             "@MaxLength value must be >= 1 (was " + constValue + ")",
@@ -149,37 +147,6 @@ public class MaxLengthDetector implements TaskListener {
       }
 
       return super.visitAnnotation(node, unused);
-    }
-
-    private Integer evaluateIntConstant(ExpressionTree expr) {
-      return switch (expr) {
-        case null -> null;
-
-        // Literal like 0, 1, etc.
-        case LiteralTree lit when lit.getValue() instanceof Integer i -> {
-          yield i;
-        }
-
-        // Handle unary minus of an int literal, e.g., -1
-        case UnaryTree unary
-            when unary.getKind() == Kind.UNARY_MINUS
-                && unary.getExpression() instanceof LiteralTree literal
-                && literal.getValue() instanceof Integer i -> {
-          yield -i;
-        }
-
-        default -> {
-          // Handle references to compile-time constants (static final int)
-          TreePath path = m_trees.getPath(m_root, expr);
-          if (path != null
-              && m_trees.getElement(path) instanceof VariableElement var
-              && var.getConstantValue() instanceof Integer i) {
-            yield i;
-          }
-
-          yield null;
-        }
-      };
     }
   }
 }
