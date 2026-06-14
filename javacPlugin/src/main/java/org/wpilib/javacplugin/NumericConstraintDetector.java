@@ -4,28 +4,38 @@
 
 package org.wpilib.javacplugin;
 
-import com.sun.source.tree.*;
-import com.sun.source.util.*;
-import org.wpilib.annotation.NumericConstraint;
-
-import javax.lang.model.element.ExecutableElement;
-import javax.tools.Diagnostic;
-import java.util.*;
+import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.util.JavacTask;
+import com.sun.source.util.TaskEvent;
+import com.sun.source.util.TaskListener;
+import com.sun.source.util.TreeScanner;
+import com.sun.source.util.Trees;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import javax.lang.model.element.ExecutableElement;
+import javax.tools.Diagnostic;
+import org.wpilib.annotation.NumericConstraint;
 
 public class NumericConstraintDetector implements TaskListener {
-  public record Operator(
-    String repr,
-    Function<String, Boolean> hasOperator,
-    BiFunction<Double, Double, Boolean> comparator
-  ) {
+  record Operator(
+      String repr,
+      Function<String, Boolean> hasOperator,
+      BiFunction<Double, Double, Boolean> comparator) {
     Operator(String repr, BiFunction<Double, Double, Boolean> comparator) {
       this(repr, s -> s.contains(repr), comparator);
     }
   }
 
-  public static final Operator[] OPERATORS = {
+  static final Operator[] OPERATORS = {
     new Operator(">", expr -> expr.contains(">") && !expr.contains(">="), (a, b) -> a > b),
     new Operator("<", expr -> expr.contains("<") && !expr.contains("<="), (a, b) -> a < b),
     new Operator(">=", (a, b) -> a >= b),
@@ -89,11 +99,11 @@ public class NumericConstraintDetector implements TaskListener {
         var paramName = params.get(i).getSimpleName().toString();
         var constVal = ConstEvaluator.evaluateNumber(m_trees, m_root, args.get(i));
         if (constVal != null) {
-            variables.put(paramName, constVal.doubleValue());
+          variables.put(paramName, constVal.doubleValue());
         }
       }
-      for (var constraint: anno.expect()) {
-        for (var operator: OPERATORS) {
+      for (var constraint : anno.expect()) {
+        for (var operator : OPERATORS) {
           if (!operator.hasOperator().apply(constraint)) {
             continue;
           }
@@ -106,9 +116,10 @@ public class NumericConstraintDetector implements TaskListener {
           if (value1 == null || value2 == null || operator.comparator.apply(value1, value2)) {
             continue;
           }
-          var msg = anno.error().isEmpty()
-            ? ("Constructor/method call did not satisfy constraint: " + constraint)
-            : anno.error();
+          var msg =
+              anno.error().isEmpty()
+                  ? ("Constructor/method call did not satisfy constraint: " + constraint)
+                  : anno.error();
           m_trees.printMessage(Diagnostic.Kind.ERROR, msg, node, m_root);
         }
       }

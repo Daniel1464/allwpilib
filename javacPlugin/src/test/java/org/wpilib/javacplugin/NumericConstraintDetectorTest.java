@@ -7,7 +7,6 @@ package org.wpilib.javacplugin;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.wpilib.javacplugin.CompileTestUtils.kJavaVersionOptions;
 
 import com.google.testing.compile.Compilation;
@@ -94,7 +93,9 @@ class NumericConstraintDetectorTest {
 
     assertThat(compilation).failed();
     assertEquals(1, compilation.errors().size());
-    assertEquals("Constructor/method call did not satisfy constraint: id >= 0", compilation.errors().get(0).getMessage(null));
+    assertEquals(
+        "Constructor/method call did not satisfy constraint: id >= 0",
+        compilation.errors().get(0).getMessage(null));
   }
 
   @Test
@@ -106,7 +107,10 @@ class NumericConstraintDetectorTest {
         import org.wpilib.annotation.NumericConstraint;
 
         class TestClass {
-          @NumericConstraint(expect = {"ratio > 0", "ratio < 1.0"}, error = "Ratio must be between 0 and 1")
+          @NumericConstraint(
+            expect = {"ratio > 0", "ratio < 1.0"},
+            error = "Ratio must be between 0 and 1"
+          )
           void setRatio(double ratio) {}
 
           void test() {
@@ -173,6 +177,8 @@ class NumericConstraintDetectorTest {
 
     assertThat(compilation).failed();
     assertEquals(1, compilation.errors().size());
-    assertEquals("Constraint has invalid reference (check your spelling): typoId >= 0", compilation.errors().get(0).getMessage(null));
+    assertEquals(
+        "Constraint has invalid reference (check your spelling): typoId >= 0",
+        compilation.errors().get(0).getMessage(null));
   }
 }
