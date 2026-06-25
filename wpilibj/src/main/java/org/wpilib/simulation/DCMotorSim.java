@@ -26,8 +26,8 @@ public class DCMotorSim extends LinearSystemSim<N2, N1, N2> {
    * Creates a simulated DC motor mechanism.
    *
    * @param plant The linear system representing the DC motor. This system can be created with
-   *     {@link org.wpilib.math.system.Models#singleJointedArmFromPhysicalConstants(DCMotor, double,
-   *     double)} or {@link org.wpilib.math.system.Models#singleJointedArmFromSysId(double,
+   *     {@link org.wpilib.math.system.Models#angularPositionVelocityFromPhysicalConsts(DCMotor, double,
+   *     double)} or {@link org.wpilib.math.system.Models#angularPositionVelocityFromSysId(double,
    *     double)}.
    * @param gearbox The type of and number of motors in the DC motor gearbox.
    * @param measurementStdDevs The standard deviations of the measurements. Can be omitted if no

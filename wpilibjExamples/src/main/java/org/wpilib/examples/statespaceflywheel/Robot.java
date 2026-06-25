@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
   // Inputs (what we can "put in"): [voltage], in volts.
   // Outputs (what we can measure): [velocity], in radians per second.
   private final LinearSystem<N1, N1, N1> flywheelPlant =
-      Models.flywheelFromPhysicalConstants(
+      Models.angularVelocityFromPhysicalConsts(
           DCMotor.getNEO(2), kFlywheelMomentOfInertia, kFlywheelGearing);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.

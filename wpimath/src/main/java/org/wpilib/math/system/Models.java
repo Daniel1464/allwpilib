@@ -16,7 +16,11 @@ public final class Models {
   }
 
   /**
-   * Creates a flywheel state-space model from physical constants.
+   * Creates a state-space model for an angular velocity system from physical constants.
+   *
+   * <p>Typical applications include flywheels, where only angular velocity (and not position) is
+   * needed. For models that require both, see {@link
+   * Models#angularPositionVelocityFromPhysicalConsts}.
    *
    * <p>The states are [angular velocity], the inputs are [voltage], and the outputs are [angular
    * velocity].
@@ -24,10 +28,10 @@ public final class Models {
    * @param motor The motor (or gearbox) attached to the flywheel.
    * @param J The moment of inertia J of the flywheel.
    * @param gearing Gear ratio from motor to flywheel (greater than 1 is a reduction).
-   * @return Flywheel state-space model.
+   * @return Angular velocity state-space model.
    * @throws IllegalArgumentException if J &lt;= 0 or gearing &lt;= 0.
    */
-  public static LinearSystem<N1, N1, N1> flywheelFromPhysicalConstants(
+  public static LinearSystem<N1, N1, N1> angularVelocityFromPhysicalConsts(
       DCMotor motor, double J, double gearing) {
     if (J <= 0.0) {
       throw new IllegalArgumentException("J must be greater than zero.");
@@ -47,19 +51,24 @@ public final class Models {
   }
 
   /**
-   * Creates a flywheel state-space model from SysId constants kᵥ (V/(rad/s)) and kₐ (V/(rad/s²))
-   * from the feedforward model u = kᵥv + kₐa.
+   * Creates a state-space model for an angular velocity system from SysId constants kᵥ (V/(rad/s))
+   * and kₐ (V/(rad/s²)) from the feedforward model u = kᵥv + kₐa.
    *
-   * <p>The states are [velocity], the inputs are [voltage], and the outputs are [velocity].
+   * <p>Typical applications include flywheels, where only angular velocity (and not position) is
+   * needed. For models that require both, see {@link
+   * Models#angularPositionVelocityFromPhysicalConsts}.
+   *
+   * <p>The states are [angular velocity], the inputs are [voltage], and the outputs are [angular
+   * velocity].
    *
    * @param kV The velocity gain, in V/(rad/s).
    * @param kA The acceleration gain, in V/(rad/s²).
-   * @return Flywheel state-space model.
+   * @return Angular velocity state-space model.
    * @throws IllegalArgumentException if kV &lt; 0 or kA &lt;= 0.
    * @see <a
    *     href="https://github.com/wpilibsuite/allwpilib/tree/main/sysid">https://github.com/wpilibsuite/allwpilib/tree/main/sysid</a>
    */
-  public static LinearSystem<N1, N1, N1> flywheelFromSysId(double kV, double kA) {
+  public static LinearSystem<N1, N1, N1> angularVelocityFromSysId(double kV, double kA) {
     if (kV < 0.0) {
       throw new IllegalArgumentException("Kv must be greater than or equal to zero.");
     }
@@ -76,7 +85,9 @@ public final class Models {
   }
 
   /**
-   * Creates an elevator state-space model from physical constants.
+   * Creates a state-space model for a linear position and velocity system from physical constants.
+   *
+   * <p>Typical applications include elevators.
    *
    * <p>The states are [position, velocity], the inputs are [voltage], and the outputs are
    * [position, velocity].
@@ -85,10 +96,10 @@ public final class Models {
    * @param mass The mass of the elevator carriage, in kilograms.
    * @param radius The radius of the elevator's driving drum, in meters.
    * @param gearing Gear ratio from motor to carriage (greater than 1 is a reduction).
-   * @return Elevator state-space model.
+   * @return Linear position and velocity state-space model.
    * @throws IllegalArgumentException if mass &lt;= 0, radius &lt;= 0, or gearing &lt;= 0.
    */
-  public static LinearSystem<N2, N1, N2> elevatorFromPhysicalConstants(
+  public static LinearSystem<N2, N1, N2> linearPositionVelocityFromPhysicalConsts(
       DCMotor motor, double mass, double radius, double gearing) {
     if (mass <= 0.0) {
       throw new IllegalArgumentException("mass must be greater than zero.");
@@ -117,20 +128,22 @@ public final class Models {
   }
 
   /**
-   * Creates an elevator state-space model from SysId constants kᵥ (V/(m/s)) and kₐ (V/(m/s²)) from
-   * the feedforward model u = kᵥv + kₐa.
+   * Creates a state-space model for a linear position and velocity system from SysId constants kᵥ
+   * (V/(m/s)) and kₐ (V/(m/s²)) from the feedforward model u = kᵥv + kₐa.
+   *
+   * <p>Typical applications include elevators.
    *
    * <p>The states are [position, velocity], the inputs are [voltage], and the outputs are
    * [position, velocity].
    *
    * @param kV The velocity gain, in V/(m/s).
    * @param kA The acceleration gain, in V/(m/s²).
-   * @return Elevator state-space model.
+   * @return Linear position and velocity state-space model.
    * @throws IllegalArgumentException if kV &lt; 0 or kA &lt;= 0.
    * @see <a
    *     href="https://github.com/wpilibsuite/allwpilib/tree/main/sysid">https://github.com/wpilibsuite/allwpilib/tree/main/sysid</a>
    */
-  public static LinearSystem<N2, N1, N2> elevatorFromSysId(double kV, double kA) {
+  public static LinearSystem<N2, N1, N2> linearPositionVelocityFromSysId(double kV, double kA) {
     if (kV < 0.0) {
       throw new IllegalArgumentException("Kv must be greater than or equal to zero.");
     }
@@ -147,18 +160,21 @@ public final class Models {
   }
 
   /**
-   * Create a single-jointed arm state-space model from physical constants.
+   * Creates a state-space model for an angular position and velocity system from physical
+   * constants.
+   *
+   * <p>Typical applications include single-jointed arms, swerve drive azimuth motors, and turrets.
    *
    * <p>The states are [angle, angular velocity], the inputs are [voltage], and the outputs are
    * [angle, angular velocity].
    *
-   * @param motor The motor (or gearbox) attached to the arm.
-   * @param J The moment of inertia J of the arm.
-   * @param gearing Gear ratio from motor to arm (greater than 1 is a reduction).
-   * @return Single-jointed arm state-space model.
+   * @param motor The motor (or gearbox) attached to the mechanism.
+   * @param J The moment of inertia J of the mechanism.
+   * @param gearing Gear ratio from motor to mechanism (greater than 1 is a reduction).
+   * @return Angular position and velocity state-space model
    * @throws IllegalArgumentException if J &lt;= 0 or gearing &lt;= 0.
    */
-  public static LinearSystem<N2, N1, N2> singleJointedArmFromPhysicalConstants(
+  public static LinearSystem<N2, N1, N2> angularPositionVelocityFromPhysicalConsts(
       DCMotor motor, double J, double gearing) {
     if (J <= 0.0) {
       throw new IllegalArgumentException("J must be greater than zero.");
@@ -183,20 +199,22 @@ public final class Models {
   }
 
   /**
-   * Creates a single-jointed arm state-space model from SysId constants kᵥ (V/(rad/s)) and kₐ
-   * (V/(rad/s²)) from the feedforward model u = kᵥv + kₐa.
+   * Creates a state-space model for an angular position and velocity system from SysId constants kᵥ
+   * (V/(rad/s)) and kₐ (V/(rad/s²)) from the feedforward model u = kᵥv + kₐa.
+   *
+   * <p>Typical applications include single-jointed arms, swerve drive azimuth motors, and turrets.
    *
    * <p>The states are [position, velocity], the inputs are [voltage], and the outputs are
    * [position, velocity].
    *
-   * @param kV The velocity gain, in volts/(unit/sec).
-   * @param kA The acceleration gain, in volts/(unit/sec²).
-   * @return Single-jointed arm state-space model.
+   * @param kV The velocity gain, in V/(rad/s).
+   * @param kA The acceleration gain, in V/(rad/s²).
+   * @return Angular position and velocity state-space model
    * @throws IllegalArgumentException if kV &lt; 0 or kA &lt;= 0.
    * @see <a
    *     href="https://github.com/wpilibsuite/allwpilib/tree/main/sysid">https://github.com/wpilibsuite/allwpilib/tree/main/sysid</a>
    */
-  public static LinearSystem<N2, N1, N2> singleJointedArmFromSysId(double kV, double kA) {
+  public static LinearSystem<N2, N1, N2> angularPositionVelocityFromSysId(double kV, double kA) {
     if (kV < 0.0) {
       throw new IllegalArgumentException("Kv must be greater than or equal to zero.");
     }

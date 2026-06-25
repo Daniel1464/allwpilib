@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
   private final DCMotor gearbox = DCMotor.getNEO(1);
 
   private final LinearSystem<N1, N1, N1> plant =
-      Models.flywheelFromPhysicalConstants(gearbox, kFlywheelGearing, kFlywheelMomentOfInertia);
+      Models.angularVelocityFromPhysicalConsts(gearbox, kFlywheelGearing, kFlywheelMomentOfInertia);
 
   private final FlywheelSim flywheelSim = new FlywheelSim(plant, gearbox);
   private final EncoderSim encoderSim = new EncoderSim(encoder);

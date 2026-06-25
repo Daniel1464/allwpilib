@@ -24,7 +24,7 @@ class DCMotorSimTest {
 
     DCMotor gearbox = DCMotor.getNEO(1);
     LinearSystem<N2, N1, N2> plant =
-        Models.singleJointedArmFromPhysicalConstants(gearbox, 0.0005, 1);
+        Models.angularPositionVelocityFromPhysicalConsts(gearbox, 0.0005, 1);
     DCMotorSim sim = new DCMotorSim(plant, gearbox);
 
     try (var motor = new PWMVictorSPX(0);
@@ -66,7 +66,7 @@ class DCMotorSimTest {
 
     DCMotor gearbox = DCMotor.getNEO(1);
     LinearSystem<N2, N1, N2> plant =
-        Models.singleJointedArmFromPhysicalConstants(gearbox, 0.0005, 1);
+        Models.angularPositionVelocityFromPhysicalConsts(gearbox, 0.0005, 1);
     DCMotorSim sim = new DCMotorSim(plant, gearbox);
 
     try (var motor = new PWMVictorSPX(0);
