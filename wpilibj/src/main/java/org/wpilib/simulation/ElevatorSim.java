@@ -32,8 +32,8 @@ public class ElevatorSim extends LinearSystemSim<N2, N1, N2> {
    * Creates a simulated elevator mechanism.
    *
    * @param plant The linear system that represents the elevator. This system can be created with
-   *     {@link org.wpilib.math.system.Models#linearPositionVelocityFromPhysicalConsts(DCMotor, double, double,
-   *     double)}.
+   *     {@link org.wpilib.math.system.Models#linearPositionVelocityFromPhysicalConsts(DCMotor,
+   *     double, double, double)}.
    * @param gearbox The type of and number of motors in the elevator gearbox.
    * @param minHeight The min allowable height of the elevator in meters.
    * @param maxHeight The max allowable height of the elevator in meters.
