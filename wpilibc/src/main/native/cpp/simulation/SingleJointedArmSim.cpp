@@ -39,7 +39,7 @@ SingleJointedArmSim::SingleJointedArmSim(
     bool simulateGravity, wpi::units::radian_t startingAngle,
     const std::array<double, 2>& measurementStdDevs)
     : SingleJointedArmSim(
-          wpi::math::Models::SingleJointedArmFromPhysicalConstants(gearbox, moi,
+          wpi::math::Models::AngularPositionVelocityFromPhysicalConsts(gearbox, moi,
                                                                    gearing),
           gearbox, gearing, armLength, minAngle, maxAngle, simulateGravity,
           startingAngle, measurementStdDevs) {}

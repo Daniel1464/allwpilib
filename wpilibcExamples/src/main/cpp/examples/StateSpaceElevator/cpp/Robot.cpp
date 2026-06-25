@@ -43,7 +43,7 @@ class Robot : public wpi::TimedRobot {
   // Inputs (what we can "put in"): [voltage], in volts.
   // Outputs (what we can measure): [position], in meters.
   wpi::math::LinearSystem<2, 1, 1> elevatorPlant =
-      wpi::math::Models::ElevatorFromPhysicalConstants(
+      wpi::math::Models::LinearPositionVelocityFromPhysicalConsts(
           wpi::math::DCMotor::NEO(2), kCarriageMass, kDrumRadius, kGearRatio)
           .Slice(0);
 

@@ -90,7 +90,7 @@ TEST(ElevatorSimTest, Stability) {
   }
 
   wpi::math::LinearSystem<2, 1, 1> system =
-      wpi::math::Models::ElevatorFromPhysicalConstants(
+      wpi::math::Models::LinearPositionVelocityFromPhysicalConsts(
           wpi::math::DCMotor::Vex775Pro(4), 4_kg, 0.5_in, 100)
           .Slice(0);
   EXPECT_NEAR_UNITS(wpi::units::meter_t{system.CalculateX(

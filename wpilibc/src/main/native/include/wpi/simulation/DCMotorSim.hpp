@@ -24,8 +24,8 @@ class DCMotorSim : public LinearSystemSim<2, 1, 2> {
    *
    * @param plant The linear system representing the DC motor. This system can
    *     be created with
-   *     wpi::math::Models::SingleJointedArmFromPhysicalConstants() or
-   *     wpi::math::Models::SingleJointedArmFromSysId().
+   *     wpi::math::Models::AngularPositionVelocityFromPhysicalConsts() or
+   *     wpi::math::Models::AngularPositionVelocityFromSysId().
    * @param gearbox The type of and number of motors in the DC motor gearbox.
    * @param measurementStdDevs The standard deviation of the measurement noise.
    */

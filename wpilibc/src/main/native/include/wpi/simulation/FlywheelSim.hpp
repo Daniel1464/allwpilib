@@ -22,8 +22,8 @@ class FlywheelSim : public LinearSystemSim<1, 1, 1> {
    * Creates a simulated flywheel mechanism.
    *
    * @param plant The linear system representing the flywheel. This system can
-   *     be created with wpi::math::Models::FlywheelFromPhysicalConstants() or
-   *     wpi::math::Models::FlywheelFromSysId().
+   *     be created with wpi::math::Models::AngularVelocityFromPhysicalConsts() or
+   *     wpi::math::Models::AngularVelocityFromSysId().
    * @param gearbox The type of and number of motors in the flywheel gearbox.
    * @param measurementStdDevs The standard deviation of the measurement noise.
    */

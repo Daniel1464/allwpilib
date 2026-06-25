@@ -97,7 +97,7 @@ class Robot : public wpi::TimedRobot {
 
   wpi::math::DCMotor gearbox = wpi::math::DCMotor::NEO(1);
   wpi::math::LinearSystem<1, 1, 1> plant{
-      wpi::math::Models::FlywheelFromPhysicalConstants(
+      wpi::math::Models::AngularVelocityFromPhysicalConsts(
           gearbox, kFlywheelMomentOfInertia, kFlywheelGearing)};
 
   wpi::sim::FlywheelSim flywheelSim{plant, gearbox};

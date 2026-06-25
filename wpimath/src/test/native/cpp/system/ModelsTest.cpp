@@ -11,12 +11,12 @@
 #include "wpi/units/length.hpp"
 #include "wpi/units/mass.hpp"
 
-TEST(ModelsTest, FlywheelFromPhysicalConstants) {
+TEST(ModelsTest, AngularVelocityFromPhysicalConsts) {
 #if __GNUC__ <= 11
-  auto model = wpi::math::Models::FlywheelFromPhysicalConstants(
+  auto model = wpi::math::Models::AngularVelocityFromPhysicalConsts(
       wpi::math::DCMotor::NEO(2), 0.00032_kg_sq_m, 1.0);
 #else
-  constexpr auto model = wpi::math::Models::FlywheelFromPhysicalConstants(
+  constexpr auto model = wpi::math::Models::AngularVelocityFromPhysicalConsts(
       wpi::math::DCMotor::NEO(2), 0.00032_kg_sq_m, 1.0);
 #endif
 
@@ -31,8 +31,8 @@ TEST(ModelsTest, FlywheelFromSysId) {
   constexpr double ka = 0.5;
 
 #if __GNUC__ <= 11
-  auto model = wpi::math::Models::FlywheelFromSysId(kv * 1_V / 1_rad_per_s,
-                                                    ka * 1_V / 1_rad_per_s_sq);
+  auto model = wpi::math::Models::AngularVelocityFromSysId(
+      kv * 1_V / 1_rad_per_s, ka * 1_V / 1_rad_per_s_sq);
 #else
   constexpr auto model = wpi::math::Models::FlywheelFromSysId(
       kv * 1_V / 1_rad_per_s, ka * 1_V / 1_rad_per_s_sq);
@@ -64,7 +64,7 @@ TEST(ModelsTest, DifferentialDriveFromPhysicalConstants) {
 }
 
 TEST(ModelsTest, ElevatorFromPhysicalConstants) {
-  auto model = wpi::math::Models::ElevatorFromPhysicalConstants(
+  auto model = wpi::math::Models::LinearPositionVelocityFromPhysicalConsts(
                    wpi::math::DCMotor::NEO(2), 5_kg, 0.05_m, 12)
                    .Slice(0);
   ASSERT_TRUE(model.A().isApprox(
@@ -74,15 +74,15 @@ TEST(ModelsTest, ElevatorFromPhysicalConstants) {
   ASSERT_TRUE(model.D().isApprox(wpi::math::Matrixd<1, 1>{0.0}, 0.001));
 }
 
-TEST(ModelsTest, ElevatorFromSysId) {
+TEST(ModelsTest, LinearPositionVelocityFromSysId) {
   constexpr double kv = 1.0;
   constexpr double ka = 0.5;
 
 #if __GNUC__ <= 11
-  auto model = wpi::math::Models::ElevatorFromSysId(kv * 1_V / 1_mps,
-                                                    ka * 1_V / 1_mps_sq);
+  auto model = wpi::math::Models::LinearPositionVelocityFromSysId(
+      kv * 1_V / 1_mps, ka * 1_V / 1_mps_sq);
 #else
-  constexpr auto model = wpi::math::Models::ElevatorFromSysId(
+  constexpr auto model = wpi::math::Models::LinearPositionVelocityFromSysId(
       kv * 1_V / 1_mps, ka * 1_V / 1_mps_sq);
 #endif
 
@@ -92,15 +92,15 @@ TEST(ModelsTest, ElevatorFromSysId) {
       model.B().isApprox(wpi::math::Matrixd<2, 1>{0.0, 1.0 / ka}, 0.001));
 }
 
-TEST(ModelsTest, SingleJointedArmFromSysId) {
+TEST(ModelsTest, AngularPositionVelocityFromSysId) {
   constexpr double kv = 1.0;
   constexpr double ka = 0.5;
 
 #if __GNUC__ <= 11
-  auto model = wpi::math::Models::SingleJointedArmFromSysId(
+  auto model = wpi::math::Models::AngularPositionVelocityFromSysId(
       kv * 1_V / 1_rad_per_s, ka * 1_V / 1_rad_per_s_sq);
 #else
-  constexpr auto model = wpi::math::Models::SingleJointedArmFromSysId(
+  constexpr auto model = wpi::math::Models::AngularPositionVelocityFromSysId(
       kv * 1_V / 1_rad_per_s, ka * 1_V / 1_rad_per_s_sq);
 #endif
 

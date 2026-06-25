@@ -36,7 +36,10 @@ class WPILIB_DLLEXPORT Models {
       wpi::units::inverse<wpi::units::seconds>>>;
 
   /**
-   * Creates a flywheel state-space model from physical constants.
+   * Creates a state-space model for an angular velocity system from physical
+   * constants.
+   *
+   * Typical Applications include flywheels.
    *
    * The states are [angular velocity], the inputs are [voltage], and the
    * outputs are [angular velocity].
@@ -47,7 +50,7 @@ class WPILIB_DLLEXPORT Models {
    *     reduction).
    * @throws std::domain_error if J <= 0 or gearing <= 0.
    */
-  static constexpr LinearSystem<1, 1, 1> FlywheelFromPhysicalConstants(
+  static constexpr LinearSystem<1, 1, 1> AngularVelocityFromPhysicalConsts(
       DCMotor motor, wpi::units::kilogram_square_meter_t J, double gearing) {
     if (J <= 0_kg_sq_m) {
       throw std::domain_error("J must be greater than zero.");
@@ -67,8 +70,9 @@ class WPILIB_DLLEXPORT Models {
   }
 
   /**
-   * Creates a flywheel state-space model from SysId constants kᵥ (V/(rad/s))
-   * and kₐ (V/(rad/s²)) from the feedforward model u = kᵥv + kₐa.
+   * Creates a state-space model for an angular velocity system from SysId
+   * constants kᵥ (V/(rad/s)) and kₐ (V/(rad/s²)) from the feedforward model u =
+   * kᵥv + kₐa.
    *
    * The states are [velocity], the inputs are [voltage], and the outputs are
    * [velocity].
@@ -79,7 +83,7 @@ class WPILIB_DLLEXPORT Models {
    * @see <a
    * href="https://github.com/wpilibsuite/allwpilib/tree/main/sysid">https://github.com/wpilibsuite/allwpilib/tree/main/sysid</a>
    */
-  static constexpr LinearSystem<1, 1, 1> FlywheelFromSysId(
+  static constexpr LinearSystem<1, 1, 1> AngularVelocityFromSysId(
       decltype(1_V / 1_rad_per_s) kV, decltype(1_V / 1_rad_per_s_sq) kA) {
     if (kV < decltype(kV){0}) {
       throw std::domain_error("Kv must be greater than or equal to zero.");
@@ -97,7 +101,10 @@ class WPILIB_DLLEXPORT Models {
   }
 
   /**
-   * Creates an elevator state-space model from physical constants.
+   * Creates a state-space model for a linear position and velocity system from
+   * physical constants.
+   *
+   * Typical applications include elevators.
    *
    * The states are [position, velocity], the inputs are [voltage], and the
    * outputs are [position, velocity].
@@ -109,9 +116,11 @@ class WPILIB_DLLEXPORT Models {
    *     reduction).
    * @throws std::domain_error if mass <= 0, radius <= 0, or gearing <= 0.
    */
-  static constexpr LinearSystem<2, 1, 2> ElevatorFromPhysicalConstants(
-      DCMotor motor, wpi::units::kilogram_t mass, wpi::units::meter_t radius,
-      double gearing) {
+  static constexpr LinearSystem<2, 1, 2>
+  LinearPositionVelocityFromPhysicalConsts(DCMotor motor,
+                                           wpi::units::kilogram_t mass,
+                                           wpi::units::meter_t radius,
+                                           double gearing) {
     if (mass <= 0_kg) {
       throw std::domain_error("mass must be greater than zero.");
     }
@@ -136,8 +145,11 @@ class WPILIB_DLLEXPORT Models {
   }
 
   /**
-   * Creates an elevator state-space model from SysId constants kᵥ (V/(m/s)) and
-   * kₐ (V/(m/s²)) from the feedforward model u = kᵥv + kₐa.
+   * Creates a state-space model for a linear position and velocity system from
+   * SysId constants kᵥ (V/(m/s)) and kₐ (V/(m/s²)) from the feedforward model u
+   * = kᵥv + kₐa.
+   *
+   * Typical applications include elevators.
    *
    * The states are [position, velocity], the inputs are [voltage], and the
    * outputs are [position, velocity].
@@ -149,7 +161,7 @@ class WPILIB_DLLEXPORT Models {
    * @see <a
    * href="https://github.com/wpilibsuite/allwpilib/tree/main/sysid">https://github.com/wpilibsuite/allwpilib/tree/main/sysid</a>
    */
-  static constexpr LinearSystem<2, 1, 2> ElevatorFromSysId(
+  static constexpr LinearSystem<2, 1, 2> LinearPositionVelocityFromSysId(
       decltype(1_V / 1_mps) kV, decltype(1_V / 1_mps_sq) kA) {
     if (kV < decltype(kV){0}) {
       throw std::domain_error("Kv must be greater than or equal to zero.");
@@ -167,7 +179,11 @@ class WPILIB_DLLEXPORT Models {
   }
 
   /**
-   * Create a single-jointed arm state-space model from physical constants.
+   * Creates a state-space model for an angular position and velocity system
+   * from physical constants.
+   *
+   * Typical applications include single-jointed arms, swerve drive azimuth
+   * motors, and turrets.
    *
    * The states are [angle, angular velocity], the inputs are [voltage], and the
    * outputs are [angle, angular velocity].
@@ -178,7 +194,8 @@ class WPILIB_DLLEXPORT Models {
    *     reduction).
    * @throws std::domain_error if J <= 0 or gearing <= 0.
    */
-  static constexpr LinearSystem<2, 1, 2> SingleJointedArmFromPhysicalConstants(
+  static constexpr LinearSystem<2, 1, 2>
+  AngularPositionVelocityFromPhysicalConsts(
       DCMotor motor, wpi::units::kilogram_square_meter_t J, double gearing) {
     if (J <= 0_kg_sq_m) {
       throw std::domain_error("J must be greater than zero.");
@@ -199,8 +216,12 @@ class WPILIB_DLLEXPORT Models {
   }
 
   /**
-   * Creates a single-jointed arm state-space model from SysId constants kᵥ
-   * (V/(rad/s)) and kₐ (V/(rad/s²)) from the feedforward model u = kᵥv + kₐa.
+   * Creates a state-space model for an angular position and velocity system
+   * from SysId constants kᵥ (V/(rad/s)) and kₐ (V/(rad/s²)) from the
+   * feedforward model u = kᵥv + kₐa.
+   *
+   * Typical applications include single-jointed arms, swerve drive azimuth
+   * motors, and turrets.
    *
    * The states are [position, velocity], the inputs are [voltage], and the
    * outputs are [position, velocity].
@@ -212,7 +233,7 @@ class WPILIB_DLLEXPORT Models {
    * @see <a
    * href="https://github.com/wpilibsuite/allwpilib/tree/main/sysid">https://github.com/wpilibsuite/allwpilib/tree/main/sysid</a>
    */
-  static constexpr LinearSystem<2, 1, 2> SingleJointedArmFromSysId(
+  static constexpr LinearSystem<2, 1, 2> AngularPositionVelocityFromSysId(
       decltype(1_V / 1_rad_per_s) kV, decltype(1_V / 1_rad_per_s_sq) kA) {
     if (kV < decltype(kV){0}) {
       throw std::domain_error("Kv must be greater than or equal to zero.");

@@ -18,9 +18,7 @@ public final class Models {
   /**
    * Creates a state-space model for an angular velocity system from physical constants.
    *
-   * <p>Typical applications include flywheels, where only angular velocity (and not position) is
-   * needed. For models that require both, see {@link
-   * Models#angularPositionVelocityFromPhysicalConsts}.
+   * <p>Typical applications include flywheels.
    *
    * <p>The states are [angular velocity], the inputs are [voltage], and the outputs are [angular
    * velocity].
@@ -54,9 +52,7 @@ public final class Models {
    * Creates a state-space model for an angular velocity system from SysId constants kᵥ (V/(rad/s))
    * and kₐ (V/(rad/s²)) from the feedforward model u = kᵥv + kₐa.
    *
-   * <p>Typical applications include flywheels, where only angular velocity (and not position) is
-   * needed. For models that require both, see {@link
-   * Models#angularPositionVelocityFromPhysicalConsts}.
+   * <p>Typical applications include flywheels.
    *
    * <p>The states are [angular velocity], the inputs are [voltage], and the outputs are [angular
    * velocity].
