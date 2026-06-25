@@ -32,7 +32,8 @@ class ElevatorSim : public LinearSystemSim<2, 1, 2> {
    * Constructs a simulated elevator mechanism.
    *
    * @param plant The linear system that represents the elevator. This system
-   *     can be created with wpi::math::Models::LinearPositionVelocityFromPhysicalConsts().
+   *     can be created with
+   * wpi::math::Models::LinearPositionVelocityFromPhysicalConsts().
    * @param gearbox The type of and number of motors in your elevator gearbox.
    * @param minHeight The minimum allowed height of the elevator.
    * @param maxHeight The maximum allowed height of the elevator.

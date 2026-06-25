@@ -44,7 +44,8 @@ FeedbackGains sysid::CalculatePositionFeedbackGains(
     return {Kv * controller.K(0, 0) * preset.outputConversionFactor, 0.0};
   }
 
-  auto system = wpi::math::Models::LinearPositionVelocityFromSysId(Kv_t{Kv}, Ka_t{Ka});
+  auto system =
+      wpi::math::Models::LinearPositionVelocityFromSysId(Kv_t{Kv}, Ka_t{Ka});
 
   wpi::math::LinearQuadraticRegulator<2, 1> controller{
       system, {params.qp, params.qv}, {params.r}, preset.period};
