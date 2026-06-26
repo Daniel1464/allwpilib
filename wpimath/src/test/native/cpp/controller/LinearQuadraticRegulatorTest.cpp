@@ -27,7 +27,7 @@ TEST(LinearQuadraticRegulatorTest, ElevatorGains) {
     // Gear ratio
     constexpr double G = 40.0 / 40.0;
 
-    return wpi::math::Models::ElevatorFromPhysicalConstants(motors, m, r, G)
+    return wpi::math::Models::LinearPositionVelocityFromPhysicalConstants(motors, m, r, G)
         .Slice(0);
   }();
   Matrixd<1, 2> K =
@@ -50,7 +50,7 @@ TEST(LinearQuadraticRegulatorTest, ArmGains) {
     // Gear ratio
     constexpr double G = 100.0;
 
-    return wpi::math::Models::SingleJointedArmFromPhysicalConstants(
+    return wpi::math::Models::AngularPositionVelocityFromPhysicalConstants(
                motors, 1.0 / 3.0 * m * r * r, G)
         .Slice(0);
   }();
@@ -76,7 +76,7 @@ TEST(LinearQuadraticRegulatorTest, FourMotorElevator) {
     // Gear ratio
     constexpr double G = 14.67;
 
-    return wpi::math::Models::ElevatorFromPhysicalConstants(motors, m, r, G)
+    return wpi::math::Models::LinearPositionVelocityFromPhysicalConstants(motors, m, r, G)
         .Slice(0);
   }();
   Matrixd<1, 2> K =
@@ -179,7 +179,7 @@ TEST(LinearQuadraticRegulatorTest, LatencyCompensate) {
     // Gear ratio
     constexpr double G = 14.67;
 
-    return wpi::math::Models::ElevatorFromPhysicalConstants(motors, m, r, G)
+    return wpi::math::Models::LinearPositionVelocityFromPhysicalConstants(motors, m, r, G)
         .Slice(0);
   }();
   LinearQuadraticRegulator<2, 1> controller{plant, {0.1, 0.2}, {12.0}, 20_ms};

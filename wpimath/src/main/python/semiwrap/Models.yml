@@ -1,12 +1,12 @@
 classes:
   wpi::math::Models:
     methods:
-      FlywheelFromPhysicalConstants:
-      FlywheelFromSysId:
-      ElevatorFromPhysicalConstants:
-      ElevatorFromSysId:
-      SingleJointedArmFromPhysicalConstants:
-      SingleJointedArmFromSysId:
+      AngularVelocityFromPhysicalConstants:
+      AngularVelocityFromSysId:
+      LinearPositionVelocityFromPhysicalConstants:
+      LinearPositionVelocityFromSysId:
+      AngularPositionVelocityFromPhysicalConstants:
+      AngularPositionVelocityFromSysId:
       DifferentialDriveFromPhysicalConstants:
       DifferentialDriveFromSysId:
         overloads:

@@ -63,7 +63,7 @@ class MyRobot(wpilib.TimedRobot):
 
         self.gearbox = wpimath.DCMotor.NEO(1)
 
-        self.plant = wpimath.Models.flywheelFromPhysicalConstants(
+        self.plant = wpimath.Models.angularVelocityFromPhysicalConstants(
             self.gearbox, self.kFlywheelGearing, self.kFlywheelMomentOfInertia
         )
 

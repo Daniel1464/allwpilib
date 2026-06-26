@@ -26,7 +26,7 @@ TEST(ModelsTest, AngularVelocityFromPhysicalConsts) {
   ASSERT_TRUE(model.D().isApprox(wpi::math::Matrixd<1, 1>{0.0}, 0.001));
 }
 
-TEST(ModelsTest, FlywheelFromSysId) {
+TEST(ModelsTest, angularVelocityFromSysId) {
   constexpr double kv = 1.0;
   constexpr double ka = 0.5;
 
@@ -34,7 +34,7 @@ TEST(ModelsTest, FlywheelFromSysId) {
   auto model = wpi::math::Models::AngularVelocityFromSysId(
       kv * 1_V / 1_rad_per_s, ka * 1_V / 1_rad_per_s_sq);
 #else
-  constexpr auto model = wpi::math::Models::FlywheelFromSysId(
+  constexpr auto model = wpi::math::Models::AngularVelocityFromSysId(
       kv * 1_V / 1_rad_per_s, ka * 1_V / 1_rad_per_s_sq);
 #endif
 
@@ -63,7 +63,7 @@ TEST(ModelsTest, DifferentialDriveFromPhysicalConstants) {
       wpi::math::Matrixd<2, 2>{{0.0, 0.0}, {0.0, 0.0}}, 0.001));
 }
 
-TEST(ModelsTest, ElevatorFromPhysicalConstants) {
+TEST(ModelsTest, linearPositionVelocityFromPhysicalConstants) {
   auto model = wpi::math::Models::LinearPositionVelocityFromPhysicalConsts(
                    wpi::math::DCMotor::NEO(2), 5_kg, 0.05_m, 12)
                    .Slice(0);

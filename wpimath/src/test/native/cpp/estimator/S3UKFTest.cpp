@@ -183,7 +183,7 @@ TEST(S3UKFTest, DriveConvergence) {
 
 TEST(S3UKFTest, LinearUKF) {
   constexpr wpi::units::second_t dt = 20_ms;
-  auto plant = wpi::math::Models::FlywheelFromSysId(0.02_V / 1_rad_per_s,
+  auto plant = wpi::math::Models::AngularVelocityFromSysId(0.02_V / 1_rad_per_s,
                                                     0.006_V / 1_rad_per_s_sq);
   wpi::math::S3UKF<1, 1, 1> observer{
       [&](const wpi::math::Vectord<1>& x, const wpi::math::Vectord<1>& u) {
